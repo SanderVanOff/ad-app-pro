@@ -230,7 +230,8 @@ export default {
     },
     addLikes(id) {
       this.addFavoriteAdToUser(id);
-      if (this.currentAd.likes) {
+      
+      if ('likes' in this.currentAd) {
         this.currentAd.likes.includes(this.currentUser.id)
           ? (this.currentAd.likes = this.currentAd.likes.filter(
               (item) => item !== this.currentUser.id

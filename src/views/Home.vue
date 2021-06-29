@@ -23,10 +23,8 @@
 import vMainSection from "@/components/ui/vMainSection.vue";
 import vCard from "@/components/ui/vCard.vue";
 import vNoAd from "@/components/ui/vNoAd.vue";
-
 //vuex
-import { mapActions } from "vuex";
-
+import { mapActions, mapGetters } from "vuex";
 export default {
   name: "Home",
   components: {
@@ -35,36 +33,32 @@ export default {
     vNoAd,
   },
   computed: {
-    // ...mapGetters(["allAds"]),
-    activeAds(){
-      return this.allAds
-    }
+    ...mapGetters(["allAds", "currentUID"]),
+    activeAds() {
+      return this.ads;
+    },
   },
-
   data: () => ({
-    allAds: '',
     loading: false,
+    counter: 0,
+    ads: [],
   }),
-
   methods: {
-    ...mapActions(["fetchAdsFromDB", "addFavoriteAdToUser"]),
-
+    ...mapActions(["fetchAdsFromDB", "addFavoriteAdToUser", "addingViewOnVisit"]),
     async goToCardInfo(id) {
-      // await this.addingViewOnVisit(id);
+      await this.addingViewOnVisit(id);
       this.$router.push({
         name: "ProductItem",
         params: { id: id },
       });
     },
-
-    async likesAd(id){
-     await this.addFavoriteAdToUser(id)
-    }
+    async likesAd(id) {
+      await this.addFavoriteAdToUser(id);
+    },
   },
-
   async mounted() {
     this.loading = true;
-    this.allAds = await this.fetchAdsFromDB();
+    this.ads = await this.fetchAdsFromDB();
     this.loading = false;
   },
 };

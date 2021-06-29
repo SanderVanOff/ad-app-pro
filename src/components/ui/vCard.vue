@@ -1,7 +1,6 @@
 <template>
   <div class="card">
     <div class="card-img position-relative">
-    <pre>{{cardItem}}</pre>
       <img
         :src="cardItem.mainImage"
         class="card-img-top card-image img-cover cursor-pointer"
@@ -25,9 +24,11 @@
         {{ cardItem.title }}
       </h6>
       <transition name="component-fade" mode="out-in">
-        <span class="icon" @click="$emit('favorite-ad')"
-          ><i v-if="isFavorite" class="fas fa-heart fs-4 cursor-pointer"> </i>
-          <i class="far fa-heart fs-4 cursor-pointer" v-else></i>
+        <span class="icon" @click="likeAd">
+          <i
+            class="fs-4 cursor-pointer fa-heart"
+            :class="isFavorite ? 'fas' : 'far'"
+          ></i>
         </span>
       </transition>
     </div>
@@ -38,9 +39,9 @@
 //filters
 import { formatCurrency } from "@/filters/currency.filter";
 //vuex
-import {mapGetters} from 'vuex';
+import { mapGetters } from "vuex";
 export default {
-  name: "cardItem",
+  name: "Card",
   props: {
     cardItem: {
       type: Object,
@@ -49,24 +50,22 @@ export default {
     },
   },
   data: () => ({
-    
+    likes: [],
   }),
 
   computed: {
-    ...mapGetters(['currentUID', 'allAds']),
+    ...mapGetters(["currentUID"]),
     isFavorite() {
-     let isTrue;
-      if (this.cardItem.likes) {
-        isTrue = this.cardItem.likes.includes(this.currentUID);
-      }
-      return isTrue;
+      return this.cardItem.likes.includes(this.currentUID) ? true : false;
     },
   },
-
 
   methods: {
     getCurrencyCost(value) {
       return formatCurrency(value);
+    },
+    likeAd() {
+      this.$emit("favorite-ad");
     },
   },
 };

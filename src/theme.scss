@@ -77,6 +77,23 @@
 .cursor-pointer {
   cursor: pointer;
 }
+.is-invalid {
+  border-color: #dc3545 !important;
+}
+.is-valid {
+  border-color: #198754 !important;
+}
+.label-form {
+  margin-bottom: .5rem!important;
+  font-weight: 700!important;
+}
+.valid-label {
+  
+  color: green;
+}
+.valid-label::after {
+  content: " ✓";
+}
 .nav-link {
   transition: all 0.3s ease-in-out;
 }

@@ -15,7 +15,7 @@
           class="btn btn-danger"
           data-bs-toggle="modal"
           data-bs-target="#removeFavorite"
-          @click="currentAd.value = ad"
+          @click="removeFavorite(card.id)"
         >
           <span>Удалить</span>
           <i class="fas fa-trash-alt ms-2"></i>
@@ -53,7 +53,10 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["fetchAdsFromDB"]),
+    ...mapActions(["fetchAdsFromDB", "addFavoriteAdToUser"]),
+    async removeFavorite(id){
+      await this.addFavoriteAdToUser(id)
+    },
   },
 
   async mounted() {
