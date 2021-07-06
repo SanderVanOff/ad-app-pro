@@ -14,19 +14,26 @@
     <!-- Loading -->
     <Loader v-if="loading" />
     <!--Form -->
-    
+
     <FormulateForm class="login-form" v-model="formValues" v-else>
-    <keep-alive>
-      <!--01 categories step -->
-      <v-choise-categories
-        v-if="counter === 1"
-        @choise-category="getCategory"
-      ></v-choise-categories>
-      <!--02 params step -->
-      <v-params v-if="counter === 2"></v-params>
-      <!--01 categories step -->
-      <!--01 categories step -->
-      <!--buttons next/prev -->
+      <keep-alive>
+        <!--01 categories step -->
+        <v-choise-categories
+          v-if="counter === 1"
+          @choise-category="getCategory"
+        ></v-choise-categories>
+        <!--02 params step -->
+        <v-params v-if="counter === 2" @get-params="getParams"></v-params>
+        <!--03 photos step -->
+        <v-photos v-if="counter === 3"
+        @done="withoutPhotos"
+        @get-photos="getPhotos"
+        ></v-photos>
+        <!--04 contact step -->
+        <v-contact v-if="counter === 4"
+        @get-contact="getContact"
+        ></v-contact>
+        <!--buttons next/prev -->
       </keep-alive>
       <div class="form-buttons mt-4">
         <button
@@ -42,14 +49,23 @@
           class="btn btn-success fs-5"
           :disabled="!done"
           @click="nextStep"
+          v-if="counter !== 4"
         >
-          Далее
+        Далее
           <i class="fas fa-forward ms-2"></i>
         </button>
+
+        <button
+          type="button"
+          class="btn btn-success fs-5"
+          :disabled="!done"
+          @click="publicateAd"
+          v-else
+        >
+        Опубликовать
+        </button>
       </div>
-      
     </FormulateForm>
-    
   </v-main-section>
 </template>
 
@@ -59,12 +75,17 @@
 import vMainSection from "@/components/ui/vMainSection.vue";
 import vChoiseCategories from "@/components/createAd/v-choiseCategories.vue";
 import vParams from "@/components/createAd/v-params.vue";
+import vPhotos from "@/components/createAd/v-photos.vue";
+import vContact from '@/components/createAd/v-contact.vue'
+
 export default {
   name: "CreateAd",
   components: {
     vMainSection,
     vChoiseCategories,
-    vParams
+    vParams,
+    vPhotos,
+    vContact
   },
 
   data: () => ({
@@ -73,24 +94,64 @@ export default {
     done: false,
     formValues: {
       categoryId: "",
+      condition: "",
+      title: "",
+      description: "",
+      cost: "",
+      city: "",
+      delivery: "",
+      phone: "",
     },
   }),
 
   methods: {
     nextStep() {
       this.counter++;
-      this.done = false
+      this.done = false;
     },
 
     prevStep() {
       this.counter--;
-      this.done = true
+      this.done = true;
     },
     getCategory(id) {
       this.formValues.categoryId = id;
       this.done = true;
     },
+
+    getParams(params) {
+      this.formValues.condition = params.condition;
+      this.formValues.title = params.title;
+      this.formValues.description = params.description;
+      this.formValues.cost = params.cost;
+      this.formValues.city = params.city;
+      this.formValues.delivery = params.delivery;
+      this.done = true;
+    },
+
+    withoutPhotos(){
+      this.done = true;
+      this.formValues.images = ['https://www.medkv.ru/images/detailed/10/no_photo.jpg'];
+      this.formValues.mainImage = 0;
+    },
+
+    getPhotos(photosData){
+      this.formValues.images = photosData.images;
+      this.formValues.mainImage = photosData.mainImage;
+      this.formValues.imagesFiles = photosData.imagesFiles;
+    },
+
+    getContact({phone, communication}){
+      this.formValues.phone = phone;
+      this.formValues.communication = communication
+      this.done = true
+    },
+
+    publicateAd(){
+      console.log('formValues', this.formValues)
+    }
   },
+
 };
 </script>
 

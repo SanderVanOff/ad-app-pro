@@ -9,10 +9,10 @@
         type="radio"
       />
     </div>
-   
- <!-- title and description-->
+
+    <!-- title and description-->
     <div class="form-control mb-3">
-     <!--title-->
+      <!--title-->
       <FormulateInput
         type="text"
         name="Название"
@@ -24,7 +24,8 @@
         label-is-valid-class="valid-label"
         label-class="label-form"
         label="Название:"
-        error-behavior="live"
+        error-behavior="value"
+        @validation="validationTitle = $event"
       />
       <!--description-->
       <FormulateInput
@@ -33,14 +34,57 @@
         resize="none"
         validation="required|min:10,length"
         validation-name="Описание"
-        error-behavior="live"
+        error-behavior="value"
         input-is-valid-class="is-valid"
         input-hasErrors-class="is-invalid"
         label-is-valid-class="valid-label"
         label-class="label-form"
         label="Описание:"
-        
         :help="`Описание должно быть больше 10 символов.`"
+        @validation="validationDescription = $event"
+      />
+    </div>
+    <!-- cost-->
+    <div class="form-control mb-3">
+      <FormulateInput
+        type="text"
+        name="Стоимость"
+        v-model.number="cost"
+        help="Во сколько оцениваете? Только честно"
+        validation="required|number"
+        input-is-valid-class="is-valid"
+        input-hasErrors-class="is-invalid"
+        label-is-valid-class="valid-label"
+        label-class="label-form"
+        label="Стоимость:"
+        error-behavior="value"
+      />
+    </div>
+
+    <!-- city-->
+    <div class="form-control mb-3">
+      <FormulateInput
+        type="text"
+        name="Местонахождение"
+        v-model="city"
+        help="Где находится?"
+        validation="required"
+        input-is-valid-class="is-valid"
+        input-hasErrors-class="is-invalid"
+        label-is-valid-class="valid-label"
+        label-class="label-form"
+        label="Местонахождение:"
+        error-behavior="value"
+        @validation="validationCity = $event"
+      />
+    </div>
+
+    <!-- city-->
+    <div class="form-control mb-3">
+      <FormulateInput
+        v-model="delivery"
+        type="checkbox"
+        label="Возможна ли доставка?"
       />
     </div>
   </section>
@@ -49,13 +93,42 @@
 <script>
 export default {
   name: "v-params",
-
   data: () => ({
     condition: "use",
     title: "",
-    description: ""
-
+    description: "",
+    cost: 0,
+    city: "",
+    delivery: false,
+    //validation
+    validationTitle: {},
+    validationDescription: {},
+    validationCity: {},
   }),
+  computed: {
+    validationParams() {
+      return (
+        !this.validationTitle.hasErrors &&
+        !this.validationDescription.hasErrors &&
+        !this.validationCity.hasErrors
+      );
+    },
+  },
+
+  watch: {
+    validationParams() {
+      this.validationParams
+        ? this.$emit("get-params", {
+            condition: this.condition,
+            title: this.title,
+            description: this.description,
+            cost: this.cost,
+            city: this.city,
+            delivery: this.delivery,
+          })
+        : false;
+    },
+  },
 };
 </script>
 
