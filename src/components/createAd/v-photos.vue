@@ -63,6 +63,7 @@ export default {
 
     loadImage() {
       this.$refs.inputImgFile.files.forEach((file, i) => {
+      
         this.imagesData.imagesFiles.push(file);
         let urlImg = URL.createObjectURL(this.$refs.inputImgFile.files[i]);
         this.imagesData.images.push(urlImg);

@@ -5,6 +5,7 @@
       <label class="fw-bold me-2 mb-2">Состояние:</label>
       <FormulateInput
         v-model="condition"
+        name="condition"
         :options="{ use: 'б/у', new: 'новый' }"
         type="radio"
       />
@@ -15,10 +16,11 @@
       <!--title-->
       <FormulateInput
         type="text"
-        name="Название"
+        name="title"
         v-model="title"
         help="Например, «Диван-кровать Икеа» или «Холодильник Бирюса 110»"
         validation="required"
+        validation-name="Название"
         input-is-valid-class="is-valid"
         input-hasErrors-class="is-invalid"
         label-is-valid-class="valid-label"
@@ -30,6 +32,7 @@
       <!--description-->
       <FormulateInput
         type="textarea"
+        name="description"
         v-model="description"
         resize="none"
         validation="required|min:10,length"
@@ -48,7 +51,8 @@
     <div class="form-control mb-3">
       <FormulateInput
         type="text"
-        name="Стоимость"
+        name="cost"
+        validation-name="Стоимость"
         v-model.number="cost"
         help="Во сколько оцениваете? Только честно"
         validation="required|number"
@@ -65,7 +69,8 @@
     <div class="form-control mb-3">
       <FormulateInput
         type="text"
-        name="Местонахождение"
+        name="city"
+        validation-name="Местонахождение"
         v-model="city"
         help="Где находится?"
         validation="required"
@@ -83,6 +88,7 @@
     <div class="form-control mb-3">
       <FormulateInput
         v-model="delivery"
+        name="delivery"
         type="checkbox"
         label="Возможна ли доставка?"
       />

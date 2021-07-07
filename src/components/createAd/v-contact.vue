@@ -6,6 +6,7 @@
       <FormulateInput
         type="tel"
         name="phone"
+        validation-name="Номер телефона"
         label="Номер телефона"
         placeholder="укажите ваш сотовый телефон"
         v-model="phone"
@@ -25,6 +26,7 @@
         label="Способ связи:"
         label-class="label-form"
         v-model="communication"
+        name="communication"
         :options="{
           onlyMessage: 'Только сообщениями',
           MessageAndPhone: 'По телефону и в сообщениях',

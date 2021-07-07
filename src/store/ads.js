@@ -1,15 +1,24 @@
 import { databaseFB } from "@/plugins/axios";
-// import { databaseAds } from "@/plugins/axios";
+import { storage } from "@/plugins/axios";
+//константы
+const config = {
+  headers: { "content-type": "multipart/form-data" },
+};
 
 export default {
   state: {
-    ads: []
+    ads: [],
   },
 
   mutations: {
     setAdsToState(state, ads) {
       state.ads = ads;
     },
+
+    setAdToState(state, ad) {
+      state.ads.push(ad);
+    },
+
     updateAdInState(state, payload) {
       let idx = state.ads.findIndex((item) => item.id === payload.id);
       state.ads[idx] = payload;
@@ -23,7 +32,7 @@ export default {
       const ad = state.ads.find((item) => item.id === id);
       const idx = ad.likes.findIndex((item) => item === uid);
       ad.likes.splice(idx, 1);
-    }
+    },
   },
 
   actions: {
@@ -38,7 +47,7 @@ export default {
           return {
             ...ads[key],
             likes: "likes" in ads[key] ? ads[key].likes : [],
-            views: 'views' in ads[key] ? ads[key].views: []
+            views: "views" in ads[key] ? ads[key].views : [],
           };
         });
 
@@ -56,13 +65,91 @@ export default {
         const { data: ad } = await databaseFB.get(
           `ads-list/${id}.json?auth=${token}`
         );
-        return {...ad,
-        likes: 'likes' in ad ? ad.likes : [],
-        views: 'views' in ad ? ad.views : [],
+        return {
+          ...ad,
+          likes: "likes" in ad ? ad.likes : [],
+          views: "views" in ad ? ad.views : [],
         };
       } catch (e) {
         console.log(e);
       }
+    },
+
+    //создание нового объявления
+    async publicNewAd({ getters, commit, dispatch }, formData) {
+      //получаем токен
+      const token = getters["currentToken"];
+
+      const {
+        id,
+        user,
+        categoryId,
+        title,
+        description,
+        cost,
+        condition,
+        city,
+        phone,
+        communication,
+        delivery,
+        mainImage: indexMainImage,
+        imagesFiles,
+      } = formData;
+      //отправляем объявление в БД
+      const { data: newAd } = await databaseFB.put(
+        `ads-list/${id}.json?auth=${token}`,
+        {
+          id,
+          uid: user.id,
+          categoryId,
+          title,
+          description,
+          cost,
+          condition,
+          city,
+          phone,
+          communication,
+          status: "moderation",
+          delivery,
+          createDate: new Date(),
+        }
+      );
+      //добавляем изображение в Сторадж
+      const { images, mainImage } = await dispatch('putImagesToStorage', {token,
+        id,
+        indexMainImage,
+        imagesFiles})
+
+      commit("setAdToState", { ...newAd, images, mainImage });
+    },
+
+    //добавление изображений в Storage
+    async putImagesToStorage(_, { token, id, indexMainImage, imagesFiles }) {
+      //Если есть изображение, то добавить в Storage, а потом URL добавить в БД
+      let images = [];
+
+      if (imagesFiles.length) {
+        const formData = new FormData();
+
+        for (let i = 0; i < imagesFiles.length; i++) {
+          formData.append("file", imagesFiles[i]);
+          const { data } = await storage.post("files/", formData, config);
+          images.push(data.file);
+        }
+        await databaseFB.patch(`ads-list/${id}.json?auth=${token}`, {
+          images,
+          mainImage: images[indexMainImage],
+        });
+      } else {
+        //Если изображение не добавлено, то нужно поставить стандартное!
+        images.push("https://www.medkv.ru/images/detailed/10/no_photo.jpg");
+        await databaseFB.patch(`ads-list/${id}?auth=${token}`, {
+          images,
+          mainImage: images[indexMainImage],
+        });
+      }
+
+      return { images, mainImage: images[indexMainImage] };
     },
 
     //Добавление/ удаление в избранном
@@ -80,7 +167,7 @@ export default {
           : commit("addLikeToAd", { id, uid: user.id });
 
         await databaseFB.patch(`ads-list/${id}.json?auth=${token}`, {
-          likes: currentAd.likes
+          likes: currentAd.likes,
         });
 
         //Добавляем текущему пользователю понравившиеся записи
@@ -93,13 +180,13 @@ export default {
         const { data: updateUser } = await databaseFB.patch(
           `users/${user.id}.json?auth=${token}`,
           {
-            favorites
+            favorites,
           }
         );
 
         commit("setUserToState", {
           ...user,
-          ...updateUser
+          ...updateUser,
         });
       } catch (e) {
         console.log(e);
@@ -121,17 +208,17 @@ export default {
         const { data: adViews } = await databaseFB.patch(
           `ads-list/${id}.json?auth=${token}`,
           {
-            views: currentAd.views
+            views: currentAd.views,
           }
         );
         commit("updateAdInState", { ...currentAd, ...adViews });
       } catch (e) {
         console.log(e);
       }
-    }
+    },
   },
 
   getters: {
-    allAds: (s) => s.ads
-  }
+    allAds: (s) => s.ads,
+  },
 };
