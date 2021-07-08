@@ -35,7 +35,7 @@ export default {
   computed: {
     ...mapGetters(["allAds", "currentUID"]),
     activeAds() {
-      return this.ads;
+      return this.ads.filter(ad => ad.status === 'active');
     },
   },
   data: () => ({

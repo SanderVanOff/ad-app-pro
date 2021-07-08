@@ -33,6 +33,11 @@ export default {
       const idx = ad.likes.findIndex((item) => item === uid);
       ad.likes.splice(idx, 1);
     },
+
+    changeStatusAdFromState(state, { id, status }) {
+      const ad = state.ads.find((item) => item.id === id);
+      ad.status = status;
+    }
   },
 
   actions: {
@@ -216,6 +221,28 @@ export default {
         console.log(e);
       }
     },
+
+    //изменение статуса объявления
+    async changeStatusAdById({getters, commit}, id){
+      const allAds = getters['allAds'];
+      const token = getters["currentToken"];
+      
+      try {
+        const currentAd = allAds.find(item => item.id === id);
+        let status = currentAd.status === 'closed' ? 'moderation' : 'closed'
+     
+await databaseFB.patch(
+          `ads-list/${id}.json?auth=${token}`,
+          {
+            status,
+          }
+        );
+        commit("changeStatusAdFromState", { id: currentAd.id, status });
+
+      }catch(e){
+        console.log(e)
+      }
+    }
   },
 
   getters: {

@@ -1,9 +1,16 @@
 <template>
-  <div>editAd</div>
+  <div>editAd {{id}}</div>
 </template>
 
 <script>
-export default {};
+export default {
+  name: "EditAd",
+  props: {
+    id: {
+      type: String
+    }
+  }
+};
 </script>
 
 <style>

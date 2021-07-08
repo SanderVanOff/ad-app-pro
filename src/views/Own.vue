@@ -22,7 +22,7 @@
           :class="card.status === 'closed' ? 'btn-success' : 'btn-danger'"
           data-bs-toggle="modal"
           data-bs-target="#removeOwn"
-          @click="currentAd.value = card"
+          @click="currentAd = card"
         >
           <i
             class="me-2"
@@ -37,6 +37,46 @@
         </button>
       </v-list-group-item>
     </div>
+    <v-modal modalId="removeOwn">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Уверены, что хотите
+            {{
+              currentAd && currentAd.status === "closed"
+                ? "вновь разместить"
+                : "закрыть"
+            }}
+            объявление?
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Нет
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-bs-dismiss="modal"
+            @click="changeStatusAd(currentAd.id)"
+          >
+            Да, уверен
+          </button>
+        </div>
+      </div>
+    </v-modal>
   </v-main-section>
 </template>
 
@@ -45,6 +85,7 @@
 import vMainSection from "@/components/ui/vMainSection.vue";
 import vListGroupItem from "@/components/ui/vListGroupItem.vue";
 import vNoAd from "@/components/ui/vNoAd.vue";
+import vModal from "@/components/ui/vModal.vue";
 
 //vuex
 import { mapActions, mapGetters } from "vuex";
@@ -56,9 +97,11 @@ export default {
     vMainSection,
     vListGroupItem,
     vNoAd,
+    vModal,
   },
   data: () => ({
     loading: true,
+    currentAd: null,
   }),
 
   computed: {
@@ -70,7 +113,14 @@ export default {
   },
 
   methods: {
-    ...mapActions(["fetchAdsFromDB"]),
+    ...mapActions(["fetchAdsFromDB", "changeStatusAdById"]),
+    async changeStatusAd(id) {
+      try {
+        await this.changeStatusAdById(id);
+      } catch (e) {
+        console.log(e);
+      }
+    },
   },
 
   async mounted() {

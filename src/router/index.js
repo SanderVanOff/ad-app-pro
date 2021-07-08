@@ -100,6 +100,16 @@ const router = new Router({
         layout: "main",
         auth: true
       }
+    },
+    {
+      name: "EditAd",
+      path: "/edit-ad/:id",
+      component: () => import("../views/EditAd.vue"),
+      props: true,
+      meta: {
+        layout: "main",
+        auth: true
+      }
     }
   ]
 });
