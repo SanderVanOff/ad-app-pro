@@ -3,7 +3,7 @@
     <!-- Loading -->
     <Loader v-if="loading" />
     <!-- empty -->
-    <v-no-ad v-else-if="!loading && allAds.lenght === 0" />
+    <v-no-ad v-else-if="!ads.lenght" />
 
     <!-- ads -->
     <transition-group name="list" tag="div" class="cards" v-else>
@@ -59,6 +59,7 @@ export default {
   async mounted() {
     this.loading = true;
     this.ads = await this.fetchAdsFromDB();
+    console.log('ads', this.ads)
     this.loading = false;
   },
 };

@@ -113,6 +113,7 @@ export default {
     city: "",
     phone: "",
     avatar: "",
+    avatarFile: null,
     //validation
     validationEmail: {},
     validationCity: {},
@@ -127,8 +128,10 @@ export default {
     },
 
     changeImage() {
+      this.avatarFile = this.$refs.inputFile.files[0];
       let urlImg = URL.createObjectURL(this.$refs.inputFile.files[0]);
       this.avatar = urlImg;
+      
     },
 
     replacePhone() {
@@ -137,18 +140,15 @@ export default {
 
     updateUserData() {
       this.loading = true;
-      try {
+
         this.$store.dispatch("updateUserData", {
           login: this.currentUser.login,
           email: this.currentUser.email,
           city: this.city,
           phone: this.phone,
-          avatar: this.$refs.inputFile.files[0],
+          avatar: this.avatarFile
         });
         this.loading = false;
-      } catch (e) {
-        console.log(e);
-      }
     },
   },
 

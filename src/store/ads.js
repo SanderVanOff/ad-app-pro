@@ -1,5 +1,6 @@
 import { databaseFB } from "@/plugins/axios";
 import { storage } from "@/plugins/axios";
+import supabase from '@/plugins/supabase'
 //константы
 const config = {
   headers: { "content-type": "multipart/form-data" },
@@ -37,30 +38,23 @@ export default {
     changeStatusAdFromState(state, { id, status }) {
       const ad = state.ads.find((item) => item.id === id);
       ad.status = status;
-    }
+    },
   },
 
   actions: {
     //Получение все объявлений
-    async fetchAdsFromDB({ commit, getters }) {
-      const token = getters["currentToken"];
-      try {
-        const { data: ads } = await databaseFB.get(
-          `ads-list.json?auth=${token}`
-        );
-        const allAds = Object.keys(ads).map((key) => {
-          return {
-            ...ads[key],
-            likes: "likes" in ads[key] ? ads[key].likes : [],
-            views: "views" in ads[key] ? ads[key].views : [],
-          };
-        });
+    async fetchAdsFromDB({ commit }) {
 
+        const { data: allAds, error } = await supabase.from("ads").select();
         commit("setAdsToState", allAds);
+        commit("setError", { type: "error fetchAds", error });
         return allAds;
-      } catch (e) {
-        console.log(e);
-      }
+    },
+
+    async fetchCategories({commit}) {
+      const { data, error } = await supabase.from("categories").select();
+      commit("setError", { type: "error fetch categories", error });
+      return data
     },
     //Получение объявления по ИД
     async getAdById({ getters }, id) {
@@ -120,10 +114,12 @@ export default {
         }
       );
       //добавляем изображение в Сторадж
-      const { images, mainImage } = await dispatch('putImagesToStorage', {token,
+      const { images, mainImage } = await dispatch("putImagesToStorage", {
+        token,
         id,
         indexMainImage,
-        imagesFiles})
+        imagesFiles,
+      });
 
       commit("setAdToState", { ...newAd, images, mainImage });
     },
@@ -223,26 +219,22 @@ export default {
     },
 
     //изменение статуса объявления
-    async changeStatusAdById({getters, commit}, id){
-      const allAds = getters['allAds'];
+    async changeStatusAdById({ getters, commit }, id) {
+      const allAds = getters["allAds"];
       const token = getters["currentToken"];
-      
-      try {
-        const currentAd = allAds.find(item => item.id === id);
-        let status = currentAd.status === 'closed' ? 'moderation' : 'closed'
-     
-await databaseFB.patch(
-          `ads-list/${id}.json?auth=${token}`,
-          {
-            status,
-          }
-        );
-        commit("changeStatusAdFromState", { id: currentAd.id, status });
 
-      }catch(e){
-        console.log(e)
+      try {
+        const currentAd = allAds.find((item) => item.id === id);
+        let status = currentAd.status === "closed" ? "moderation" : "closed";
+
+        await databaseFB.patch(`ads-list/${id}.json?auth=${token}`, {
+          status,
+        });
+        commit("changeStatusAdFromState", { id: currentAd.id, status });
+      } catch (e) {
+        console.log(e);
       }
-    }
+    },
   },
 
   getters: {

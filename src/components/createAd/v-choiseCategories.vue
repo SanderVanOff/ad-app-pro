@@ -14,27 +14,26 @@
 </template>
 
 <script>
+//vuex
+import {mapActions} from 'vuex'
 export default {
   name: "choiseCategories",
 
   data: () => ({
     categoryID: "",
-    categories: [
-      { id: "001", title: "Транспорт", name: "vihicle" },
-      { id: "002", title: "Недвижимость", name: "estate" },
-      { id: "003", title: "Услуги", name: "services" },
-      { id: "004", title: "Личные вещи", name: "personal_thinks" },
-      { id: "005", title: "Хобби и отдых", name: "hobby" },
-      { id: "006", title: "Бытовая электроника", name: "electronics" },
-      { id: "007", title: "Для дома и дачи", name: "for_home" },
-    ],
+    categories: [],
   }),
 
   methods: {
+    ...mapActions(['fetchCategories']),
       choiseCategory(id){
           this.categoryID = id;
           this.$emit('choise-category', id)
       }
+  },
+
+  async mounted() {
+    this.categories = await this.fetchCategories()
   }
 };
 </script>
