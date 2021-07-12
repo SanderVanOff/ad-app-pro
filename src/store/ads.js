@@ -1,6 +1,6 @@
 import { databaseFB } from "@/plugins/axios";
 import { storage } from "@/plugins/axios";
-import supabase from '@/plugins/supabase'
+import supabase from "@/plugins/supabase";
 //константы
 const config = {
   headers: { "content-type": "multipart/form-data" },
@@ -44,41 +44,28 @@ export default {
   actions: {
     //Получение все объявлений
     async fetchAdsFromDB({ commit }) {
-
-        const { data: allAds, error } = await supabase.from("ads").select();
-        commit("setAdsToState", allAds);
-        commit("setError", { type: "error fetchAds", error });
-        return allAds;
+      const { data: allAds, error } = await supabase.from("ads").select();
+      commit("setAdsToState", allAds);
+      commit("setError", { type: "error fetchAds", error });
+      return allAds;
     },
 
-    async fetchCategories({commit}) {
+    async fetchCategories({ commit }) {
       const { data, error } = await supabase.from("categories").select();
       commit("setError", { type: "error fetch categories", error });
-      return data
+      return data;
     },
     //Получение объявления по ИД
-    async getAdById({ getters }, id) {
-      try {
-        const token = getters["currentToken"];
-
-        const { data: ad } = await databaseFB.get(
-          `ads-list/${id}.json?auth=${token}`
-        );
-        return {
-          ...ad,
-          likes: "likes" in ad ? ad.likes : [],
-          views: "views" in ad ? ad.views : [],
-        };
-      } catch (e) {
-        console.log(e);
-      }
+    async getAdById(_, id) {
+      const { data } = await supabase
+        .from("ads")
+        .select()
+        .eq("id", id);
+      return data[0]
     },
 
     //создание нового объявления
-    async publicNewAd({ getters, commit, dispatch }, formData) {
-      //получаем токен
-      const token = getters["currentToken"];
-
+    async publicNewAd({ commit, dispatch }, formData) {
       const {
         id,
         user,
@@ -95,8 +82,8 @@ export default {
         imagesFiles,
       } = formData;
       //отправляем объявление в БД
-      const { data: newAd } = await databaseFB.put(
-        `ads-list/${id}.json?auth=${token}`,
+
+      const { data, error } = await supabase.from("ads").insert([
         {
           id,
           uid: user.id,
@@ -111,21 +98,22 @@ export default {
           status: "moderation",
           delivery,
           createDate: new Date(),
-        }
-      );
+        },
+      ]);
+
       //добавляем изображение в Сторадж
       const { images, mainImage } = await dispatch("putImagesToStorage", {
-        token,
         id,
         indexMainImage,
         imagesFiles,
       });
-
-      commit("setAdToState", { ...newAd, images, mainImage });
+      error
+        ? commit("setError", { type: "error create ad", error })
+        : commit("setAdToState", { ...data, images, mainImage });
     },
 
     //добавление изображений в Storage
-    async putImagesToStorage(_, { token, id, indexMainImage, imagesFiles }) {
+    async putImagesToStorage(_, { id, indexMainImage, imagesFiles }) {
       //Если есть изображение, то добавить в Storage, а потом URL добавить в БД
       let images = [];
 
@@ -137,18 +125,15 @@ export default {
           const { data } = await storage.post("files/", formData, config);
           images.push(data.file);
         }
-        await databaseFB.patch(`ads-list/${id}.json?auth=${token}`, {
-          images,
-          mainImage: images[indexMainImage],
-        });
       } else {
         //Если изображение не добавлено, то нужно поставить стандартное!
         images.push("https://www.medkv.ru/images/detailed/10/no_photo.jpg");
-        await databaseFB.patch(`ads-list/${id}?auth=${token}`, {
-          images,
-          mainImage: images[indexMainImage],
-        });
       }
+
+      await supabase
+        .from("ads")
+        .update([{ images, mainImage: images[indexMainImage] }])
+        .eq("id", id);
 
       return { images, mainImage: images[indexMainImage] };
     },

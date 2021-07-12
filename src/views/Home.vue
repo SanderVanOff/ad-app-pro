@@ -3,7 +3,7 @@
     <!-- Loading -->
     <Loader v-if="loading" />
     <!-- empty -->
-    <v-no-ad v-else-if="!ads.lenght" />
+    <v-no-ad v-else-if="!ads.length" />
 
     <!-- ads -->
     <transition-group name="list" tag="div" class="cards" v-else>
@@ -35,7 +35,8 @@ export default {
   computed: {
     ...mapGetters(["allAds", "currentUID"]),
     activeAds() {
-      return this.ads.filter(ad => ad.status === 'active');
+      return this.ads;
+      // return this.ads.filter(ad => ad.status === 'active');
     },
   },
   data: () => ({
@@ -46,7 +47,7 @@ export default {
   methods: {
     ...mapActions(["fetchAdsFromDB", "addFavoriteAdToUser", "addingViewOnVisit"]),
     async goToCardInfo(id) {
-      await this.addingViewOnVisit(id);
+      // await this.addingViewOnVisit(id);
       this.$router.push({
         name: "ProductItem",
         params: { id: id },
@@ -59,7 +60,6 @@ export default {
   async mounted() {
     this.loading = true;
     this.ads = await this.fetchAdsFromDB();
-    console.log('ads', this.ads)
     this.loading = false;
   },
 };

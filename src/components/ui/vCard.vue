@@ -54,9 +54,9 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(["currentUID"]),
+    ...mapGetters(["currentUser"]),
     isFavorite() {
-      return this.cardItem.likes.includes(this.currentUID) ? true : false;
+      return this.cardItem.likes.includes(this.currentUser.id) ? true : false;
     },
   },
 

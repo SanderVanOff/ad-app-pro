@@ -16,7 +16,6 @@
         label-is-valid-class="valid-label"
         label-class="label-form"
         error-behavior="value"
-        @keyup="replacePhone"
         @validation="validationPhone = $event"
       />
     </div>

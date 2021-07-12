@@ -79,7 +79,7 @@ export default {
     async getCurrentUser({ commit, dispatch }) {
       const user = supabase.auth.user();
       const currentUser = await dispatch("getUserById", user.id);
-      commit("setUserToState", currentUser[0]);
+      commit("setUserToState", currentUser);
     },
 
     //GET USER BY ID
@@ -90,7 +90,7 @@ export default {
         .select()
         .eq("id", id);
       commit("setError", { type: "error getUserById", error });
-      return data;
+      return data[0];
     },
 
     //UPDATE USER DATA
