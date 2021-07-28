@@ -3,7 +3,12 @@
     <!-- Loading -->
     <Loader v-if="loading" />
     <!-- empty -->
-    <v-no-ad v-else-if="!loading && favoriteAds.lenght === 0" />
+    <v-no-ad
+      v-else-if="!loading && favoriteAds.length === 0"
+      :text="'Добавим?'"
+      :btnText="'Перейти к объявлениям'"
+      :btnLink="'Home'"
+    />
     <!-- favorites -->
     <div class="list-group" v-else>
       <v-list-group-item
@@ -15,12 +20,40 @@
           class="btn btn-danger"
           data-bs-toggle="modal"
           data-bs-target="#removeFavorite"
-          @click="removeFavorite(card.id)"
+          @click="currentAdId = card.id"
         >
           <span>Удалить</span>
           <i class="fas fa-trash-alt ms-2"></i>
         </button>
       </v-list-group-item>
+      <v-modal modalId="removeFavorite">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <p>Уверены, что хотите удалить объявление из избранного?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                  Нет
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-bs-dismiss="modal"
+                  @click="removeFavorite"
+                >
+                  Да, уверен
+                </button>
+              </div>
+            </div>
+          </v-modal>
     </div>
   </v-main-section>
 </template>
@@ -30,6 +63,7 @@
 import vMainSection from "@/components/ui/vMainSection.vue";
 import vListGroupItem from "@/components/ui/vListGroupItem.vue";
 import vNoAd from "@/components/ui/vNoAd.vue";
+import vModal from '@/components/ui/vModal.vue'
 
 //vuex
 import { mapActions, mapGetters } from "vuex";
@@ -39,9 +73,11 @@ export default {
     vMainSection,
     vListGroupItem,
     vNoAd,
+    vModal
   },
   data: () => ({
     loading: true,
+    currentAdId: ''
   }),
   computed: {
     ...mapGetters(["allAds", "currentUID"]),
@@ -54,8 +90,8 @@ export default {
   },
   methods: {
     ...mapActions(["fetchAdsFromDB", "addFavoriteAdToUser"]),
-    async removeFavorite(id){
-      await this.addFavoriteAdToUser(id)
+    async removeFavorite() {
+      await this.addFavoriteAdToUser(this.currentAdId);
     },
   },
 

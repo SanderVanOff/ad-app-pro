@@ -39,6 +39,7 @@
 <script>
 export default {
   name: "v-contact",
+  props: ['ad'],
   data: () => ({
     phone: "",
     communication: "onlyMessage",
@@ -70,6 +71,10 @@ export default {
       this.phone = this.phone.replace(this.patternMobile, "+7 ($2) $3-$4-$5");
     },
   },
+  mounted() {
+    this.phone = this.ad.phone;
+    this.communication = this.ad.communication;
+  }
 };
 </script>
 

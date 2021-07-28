@@ -1,4 +1,3 @@
-import { databaseFB } from "@/plugins/axios";
 import { storage } from "@/plugins/axios";
 import supabase from "@/plugins/supabase";
 //константы
@@ -140,7 +139,6 @@ export default {
 
     //Добавление/ удаление в избранном
     async addFavoriteAdToUser({ commit, getters }, id) {
-      const token = getters["currentToken"];
       const user = getters["currentUser"];
       //Получаем нужное объявление
       const currentAd = getters["allAds"].find((item) => item.id === id);
@@ -152,27 +150,26 @@ export default {
           ? commit("deleteLikeFromAd", { id, uid: user.id })
           : commit("addLikeToAd", { id, uid: user.id });
 
-        await databaseFB.patch(`ads-list/${id}.json?auth=${token}`, {
-          likes: currentAd.likes,
-        });
+          await supabase
+        .from("ads")
+        .update([{ likes: currentAd.likes }])
+        .eq("id", id);
 
         //Добавляем текущему пользователю понравившиеся записи
-        let favorites = user.favorites ? user.favorites : [];
+        let favorites = user.favorites;
 
         favorites.includes(id)
           ? (favorites = favorites.filter((item) => item !== id))
           : favorites.push(id);
 
-        const { data: updateUser } = await databaseFB.patch(
-          `users/${user.id}.json?auth=${token}`,
-          {
-            favorites,
-          }
-        );
+          await supabase
+          .from("users")
+          .update([{ favorites }])
+          .eq("id", user.id);
 
         commit("setUserToState", {
           ...user,
-          ...updateUser,
+          favorites,
         });
       } catch (e) {
         console.log(e);
@@ -181,7 +178,6 @@ export default {
 
     //Добавление просмотров при посещении товара
     async addingViewOnVisit({ commit, getters }, id) {
-      const token = getters["currentToken"];
       const user = getters["currentUser"];
 
       try {
@@ -191,13 +187,12 @@ export default {
           currentAd.views.push(user.id);
         }
 
-        const { data: adViews } = await databaseFB.patch(
-          `ads-list/${id}.json?auth=${token}`,
-          {
-            views: currentAd.views,
-          }
-        );
-        commit("updateAdInState", { ...currentAd, ...adViews });
+        await supabase
+        .from("ads")
+        .update([{ views: currentAd.views }])
+        .eq("id", id);
+
+        commit("updateAdInState", { ...currentAd, views:currentAd.views  });
       } catch (e) {
         console.log(e);
       }
@@ -206,15 +201,16 @@ export default {
     //изменение статуса объявления
     async changeStatusAdById({ getters, commit }, id) {
       const allAds = getters["allAds"];
-      const token = getters["currentToken"];
 
       try {
         const currentAd = allAds.find((item) => item.id === id);
         let status = currentAd.status === "closed" ? "moderation" : "closed";
 
-        await databaseFB.patch(`ads-list/${id}.json?auth=${token}`, {
-          status,
-        });
+        await supabase
+        .from("ads")
+        .update([{ status}])
+        .eq("id", id);
+
         commit("changeStatusAdFromState", { id: currentAd.id, status });
       } catch (e) {
         console.log(e);

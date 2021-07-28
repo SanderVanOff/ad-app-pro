@@ -99,8 +99,10 @@
 <script>
 export default {
   name: "v-params",
+  props: ['ad'],
   data: () => ({
-    condition: "use",
+    loading: false,
+    condition: 'use',
     title: "",
     description: "",
     cost: 0,
@@ -135,6 +137,17 @@ export default {
         : false;
     },
   },
+  mounted() {
+    if(this.ad) {
+    this.title = this.ad.title;
+    this.condition = this.ad.condition;
+    this.description = this.ad.description;
+    this.cost = this.ad.cost;
+    this.city = this.ad.city;
+    this.delivery = this.ad.delivery;
+    }
+  }
+
 };
 </script>
 

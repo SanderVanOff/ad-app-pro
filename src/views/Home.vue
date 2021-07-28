@@ -3,7 +3,7 @@
     <!-- Loading -->
     <Loader v-if="loading" />
     <!-- empty -->
-    <v-no-ad v-else-if="!ads.length" />
+    <v-no-ad v-else-if="!ads.length"/>
 
     <!-- ads -->
     <transition-group name="list" tag="div" class="cards" v-else>
@@ -45,9 +45,12 @@ export default {
     ads: [],
   }),
   methods: {
-    ...mapActions(["fetchAdsFromDB", "addFavoriteAdToUser", "addingViewOnVisit"]),
+    ...mapActions([
+      "fetchAdsFromDB",
+      "addFavoriteAdToUser",
+    ]),
     async goToCardInfo(id) {
-      // await this.addingViewOnVisit(id);
+      
       this.$router.push({
         name: "ProductItem",
         params: { id: id },

@@ -36,16 +36,17 @@ Vue.use(VueLoaders);
 //global components
 Vue.component("Loader", Loader);
 
+
 let app;
 
 if (!app) {
-  supabase.auth.onAuthStateChange(async (_, data) => {
-    app = new Vue({
-      router,
-      store,
-      render: (h) => h(App),
-    }).$mount("#app");
+  app = new Vue({
+    router,
+    store,
+    render: (h) => h(App),
+  }).$mount("#app");
 
+  supabase.auth.onAuthStateChange(async (_, data) => {
     store.commit("setToken", {
       uid: data.user.id,
       token: data.access_token,

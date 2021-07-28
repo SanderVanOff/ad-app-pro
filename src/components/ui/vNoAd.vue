@@ -1,20 +1,38 @@
 <template>
   <div class="empty text-center">
     <p class="empty__text fs-3">Объявлений пока нет!</p>
-    <p class="empty__text fs-3">Создадим?</p>
+    <p class="empty__text fs-3">{{ text }}</p>
 
     <router-link
       class="btn btn-success me-2"
       tag="button"
-      :to="{ name: 'createAd' }"
+      :to="{ name: btnLink }"
     >
-      <span class="btn-text">Разместить объявление</span>
+      <span class="btn-text">{{ btnText }}</span>
     </router-link>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  name: "vNoAd",
+  props: {
+    text: {
+      type: String,
+      default: "Создадим?",
+    },
+
+    btnText: {
+      type: String,
+      default: "Разместить объявление"
+    },
+
+    btnLink: {
+      type: String,
+      default: "createAd"
+    }
+  },
+};
 </script>
 
 <style>

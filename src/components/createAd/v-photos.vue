@@ -47,6 +47,7 @@
 <script>
 export default {
   name: "v-photos",
+  props: ['ad'],
   data: () => ({
     defaultMainImage: 0,
     imagesData: {
@@ -81,7 +82,8 @@ export default {
   },
 
   mounted(){
-      this.$emit('done')
+      this.$emit('done');
+      
   },
 
   updated(){

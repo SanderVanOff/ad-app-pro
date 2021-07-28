@@ -218,7 +218,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["getAdById", "getUserById", "addFavoriteAdToUser"]),
+    ...mapActions(["getAdById", "getUserById", "addFavoriteAdToUser", "addingViewOnVisit"]),
     getCostInCurrency(value) {
       return formatCurrency(value);
     },
@@ -244,6 +244,7 @@ export default {
     },
   },
   async mounted() {
+    await this.addingViewOnVisit(this.id);
     this.currentAd = await this.getAdById(this.id);
     this.userAd = await this.getUserById(this.currentAd.uid);
     this.loading = false;

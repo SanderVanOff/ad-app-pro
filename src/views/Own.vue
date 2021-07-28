@@ -4,7 +4,7 @@
     <Loader v-if="loading" />
     <!-- empty -->
 
-    <v-no-ad v-else-if="!loading && usersAds.lenght === 0" />
+    <v-no-ad v-else-if="!loading && usersAds.length === 0" />
 
     <!-- own -->
     <div class="list-group">
