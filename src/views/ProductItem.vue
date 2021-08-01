@@ -1,14 +1,14 @@
 <template>
-  <v-main-section>
+  <div>
     <!-- Loading -->
     <Loader v-if="loading" />
 
     <!-- Product -->
 
-    <div class="row d-flex p-3" v-else>
-      <!-- Ad Data -->
-      <div class="col-7 d-flex flex-column">
-        <h3 class="card-title break-word mb-3 pe-4">{{ currentAd.title }}</h3>
+    <div class="product-info" v-else>
+      <!-- image -->
+      <div class="d-flex flex-column postitio-sticky top-0">
+        
         <div
           id="carouselExampleIndicators"
           class="carousel slide"
@@ -43,9 +43,10 @@
                   rounded
                   img-contain img-thumbnail
                   cursor-pointer
+                  
                 "
                 alt="..."
-                style="height: 380px; background-color: #212529"
+                style="background-color: #212529; height: calc(100vh - 3rem);"
                 data-bs-toggle="modal"
                 data-bs-target="#modalImageId"
                 @click="modalImage = item"
@@ -71,37 +72,37 @@
             <span class="visually-hidden">Next</span>
           </button>
         </div>
-        <div
-          class="text-start mt-4"
-          v-html="currentAd.description.replaceAll('\n', '<br/>')"
-        ></div>
-
-        <hr />
-        <p class="card-text">
-          <span class="fw-bold me-2">Город:</span>
-          {{ currentAd.city }}
-        </p>
-
-        <p class="card-text">
-          <span class="fw-bold me-2">Состояние:</span>
-          {{ isCondition }}
-        </p>
-
-        <p class="card-text">
-          <span class="fw-bold me-2">Доставка:</span>
-          {{ isDelivery }}
-        </p>
-
-        <hr />
       </div>
-      <!-- User Data -->
-      <div class="col-5 d-flex flex-column">
-        <div class="card text-white bg-dark mb-3" style="max-width: 18rem">
+      <!-- Data -->
+      <div class="d-flex flex-column bg-dark text-white p-0 product-data">
+        <div class="card_info">
           <div class="card-header bg-danger fs-2">
             {{ getCostInCurrency(currentAd.cost) }}
           </div>
           <div class="card-body">
+          <h3 class="card-title break-word mb-3 pe-4">{{ currentAd.title }}</h3>
             <div class="card-body__views mb-2">
+              <div
+                class="text-start mt-4 px-2"
+                v-html="currentAd.description.replaceAll('\n', '<br/>')"
+              ></div>
+              <hr />
+              <p class="card-text">
+                <span class="fw-bold me-2 px-2">Город:</span>
+                {{ currentAd.city }}
+              </p>
+
+              <p class="card-text">
+                <span class="fw-bold me-2 px-2">Состояние:</span>
+                {{ isCondition }}
+              </p>
+
+              <p class="card-text px-2">
+                <span class="fw-bold me-2">Доставка:</span>
+                {{ isDelivery }}
+              </p>
+
+              <hr />
               <span class="me-2">Добавлено:</span>
               <span class="me-2">{{ getDateAd(currentAd.createDate) }}</span>
               <i class="fas fa-calendar-alt"></i>
@@ -131,15 +132,10 @@
               <i class="far fa-heart fs-4 me-3"></i>
               <span>{{ textFavoriteButton }}</span>
             </button>
-            <div class="card-body d-flex flex-column align-items-center">
-              <img
-                :src="userAd.avatar"
-                class="img-thumbnail me-3 rounded-circle user-avatar"
-                alt="..."
-              />
-              <h5 class="card-title mt-3">{{ userAd.login }}</h5>
-            </div>
-            <div class="buttons-group d-flex justify-content-evenly">
+            <hr />
+            <div class="user-info d-flex justify-content-around">
+            
+            <div class="buttons-group d-flex flex-column justify-content-evenly">
               <button
                 type="button"
                 class="btn btn-primary"
@@ -155,28 +151,37 @@
               </button>
               <button type="button" class="btn btn-success">Написать</button>
             </div>
+            <div class="d-flex flex-column align-items-center">
+              <img
+                :src="userAd.avatar"
+                class="img-thumbnail me-3 rounded-circle user-avatar"
+                alt="..."
+              />
+              <h5 class="card-title mt-3">{{ userAd.login }}</h5>
+            </div>
+            </div>
           </div>
         </div>
       </div>
-      <!-- modals images -->
-      <v-modal modalId="modalImageId" classModal="modal__image">
-        <img :src="modalImage" alt="" class="modal-img" />
-      </v-modal>
-      <!-- modals phone -->
-      <v-modal modalId="modalPhone">
-        <div class="card">
-          <div class="card-body h2 text-center">
-            {{ currentAd.phone }}
-          </div>
-        </div>
-      </v-modal>
     </div>
-  </v-main-section>
+    <!-- modals images -->
+    <v-modal modalId="modalImageId" classModal="modal__image">
+      <img :src="modalImage" alt="" class="modal-img" />
+    </v-modal>
+    <!-- modals phone -->
+    <v-modal modalId="modalPhone">
+      <div class="card">
+        <div class="card-body h2 text-center">
+          {{ currentAd.phone }}
+        </div>
+      </div>
+    </v-modal>
+  </div>
 </template>
 
 <script>
 //comoponent
-import vMainSection from "@/components/ui/vMainSection.vue";
+// import vMainSection from "@/components/ui/vMainSection.vue";
 import vModal from "@/components/ui/vModal.vue";
 //vuex
 import { mapActions, mapGetters } from "vuex";
@@ -187,7 +192,7 @@ import dateFilter from "@/filters/date.filter.js";
 export default {
   name: "ProductItem",
   props: ["id"],
-  components: { vMainSection, vModal },
+  components: { vModal },
   data: () => ({
     loading: true,
     currentImage: 0,
@@ -218,7 +223,12 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["getAdById", "getUserById", "addFavoriteAdToUser", "addingViewOnVisit"]),
+    ...mapActions([
+      "getAdById",
+      "getUserById",
+      "addFavoriteAdToUser",
+      "addingViewOnVisit",
+    ]),
     getCostInCurrency(value) {
       return formatCurrency(value);
     },
@@ -230,8 +240,8 @@ export default {
     },
     addLikes(id) {
       this.addFavoriteAdToUser(id);
-      
-      if ('likes' in this.currentAd) {
+
+      if ("likes" in this.currentAd) {
         this.currentAd.likes.includes(this.currentUser.id)
           ? (this.currentAd.likes = this.currentAd.likes.filter(
               (item) => item !== this.currentUser.id
@@ -253,6 +263,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.product-info {
+  display: grid;
+  grid-template-columns: 8fr 4fr;
+  height: calc(100vh - 3.5rem);
+  overflow: hidden;
+}
+.product-data {
+  overflow: auto;
+}
 .user-avatar {
   width: 100px;
   height: 100px;

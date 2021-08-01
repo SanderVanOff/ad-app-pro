@@ -11,6 +11,7 @@
         aria-valuemax="100"
       ></div>
     </div>
+    <pre>{{formValues}}</pre>
     <!-- Loading -->
     <Loader v-if="loading" />
     <!--Form -->
@@ -23,7 +24,9 @@
           @choise-category="getCategory"
         ></v-choise-categories>
         <!--02 params step -->
-        <v-params v-if="counter === 2" @get-params="getParams"></v-params>
+        <v-params v-if="counter === 2" 
+        @done-params="doneParams"
+        @get-params="getParams"></v-params>
         <!--03 photos step -->
         <v-photos
           v-if="counter === 3"
@@ -31,7 +34,9 @@
           @get-photos="getPhotos"
         ></v-photos>
         <!--04 contact step -->
-        <v-contact v-if="counter === 4" @get-contact="getContact"></v-contact>
+        <v-contact v-if="counter === 4" 
+        @done-params="doneParams"
+        @get-contact="getContact"></v-contact>
         <!--buttons next/prev -->
       </keep-alive>
       <div class="form-buttons mt-4">
@@ -76,11 +81,15 @@ import vChoiseCategories from "@/components/createAd/v-choiseCategories.vue";
 import vParams from "@/components/createAd/v-params.vue";
 import vPhotos from "@/components/createAd/v-photos.vue";
 import vContact from "@/components/createAd/v-contact.vue";
+
+//mixins
+import edidAdMixin from '@/mixins/editAd.mixin.js'
 //vuex
 import {mapActions, mapGetters} from 'vuex'
 
 export default {
   name: "CreateAd",
+  mixins: [edidAdMixin],
   components: {
     vMainSection,
     vChoiseCategories,
@@ -97,16 +106,7 @@ export default {
       id: Date.now().toString(32),
       user: '',
       categoryId: "",
-      condition: "use",
-      title: "",
-      description: "",
-      cost: 0,
-      city: "",
-      delivery: false,
-      phone: "",
-      mainImage: 0,
-      imagesFiles: [],
-      communication: "onlyMessage",
+      
     },
   }),
 
@@ -131,31 +131,6 @@ export default {
       this.done = true;
     },
 
-    getParams(params) {
-      this.formValues.condition = params.condition;
-      this.formValues.title = params.title;
-      this.formValues.description = params.description;
-      this.formValues.cost = params.cost;
-      this.formValues.city = params.city;
-      this.formValues.delivery = params.delivery;
-      this.done = true;
-    },
-
-    withoutPhotos() {
-      this.done = true;
-      this.formValues.mainImage = 0;
-    },
-
-    getPhotos(photosData) {
-      this.formValues.mainImage = photosData.mainImage;
-      this.formValues.imagesFiles = photosData.imagesFiles;
-    },
-
-    getContact({ phone, communication }) {
-      this.formValues.phone = phone;
-      this.formValues.communication = communication;
-      this.done = true;
-    },
 
     async publicateAd() {
       this.loading = true;

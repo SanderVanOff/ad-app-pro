@@ -4,10 +4,11 @@
     <div class="form-control mb-3">
       <label class="fw-bold me-2 mb-2">Состояние:</label>
       <FormulateInput
-        v-model="condition"
+        v-model="params.condition"
         name="condition"
         :options="{ use: 'б/у', new: 'новый' }"
         type="radio"
+        @input="changeData"
       />
     </div>
 
@@ -17,7 +18,7 @@
       <FormulateInput
         type="text"
         name="title"
-        v-model="title"
+        v-model="params.title"
         help="Например, «Диван-кровать Икеа» или «Холодильник Бирюса 110»"
         validation="required"
         validation-name="Название"
@@ -28,12 +29,13 @@
         label="Название:"
         error-behavior="value"
         @validation="validationTitle = $event"
+        @input="changeData"
       />
       <!--description-->
       <FormulateInput
         type="textarea"
         name="description"
-        v-model="description"
+        v-model="params.description"
         resize="none"
         validation="required|min:10,length"
         validation-name="Описание"
@@ -45,6 +47,7 @@
         label="Описание:"
         :help="`Описание должно быть больше 10 символов.`"
         @validation="validationDescription = $event"
+        @input="changeData"
       />
     </div>
     <!-- cost-->
@@ -53,7 +56,7 @@
         type="text"
         name="cost"
         validation-name="Стоимость"
-        v-model.number="cost"
+        v-model.number="params.cost"
         help="Во сколько оцениваете? Только честно"
         validation="required|number"
         input-is-valid-class="is-valid"
@@ -62,6 +65,7 @@
         label-class="label-form"
         label="Стоимость:"
         error-behavior="value"
+        @input="changeData"
       />
     </div>
 
@@ -71,7 +75,7 @@
         type="text"
         name="city"
         validation-name="Местонахождение"
-        v-model="city"
+        v-model="params.city"
         help="Где находится?"
         validation="required"
         input-is-valid-class="is-valid"
@@ -81,16 +85,18 @@
         label="Местонахождение:"
         error-behavior="value"
         @validation="validationCity = $event"
+        @input="changeData"
       />
     </div>
 
     <!-- city-->
     <div class="form-control mb-3">
       <FormulateInput
-        v-model="delivery"
+        v-model="params.delivery"
         name="delivery"
         type="checkbox"
         label="Возможна ли доставка?"
+        @input="changeData"
       />
     </div>
   </section>
@@ -99,15 +105,17 @@
 <script>
 export default {
   name: "v-params",
-  props: ['ad'],
+  props: ["ad"],
   data: () => ({
     loading: false,
-    condition: 'use',
-    title: "",
-    description: "",
-    cost: 0,
-    city: "",
-    delivery: false,
+    params: {
+      condition: "use",
+      title: "",
+      description: "",
+      cost: 0,
+      city: "",
+      delivery: false,
+    },
     //validation
     validationTitle: {},
     validationDescription: {},
@@ -123,31 +131,27 @@ export default {
     },
   },
 
+  methods: {
+    changeData() {
+      this.$emit("get-params", this.params);
+    },
+  },
+
   watch: {
     validationParams() {
-      this.validationParams
-        ? this.$emit("get-params", {
-            condition: this.condition,
-            title: this.title,
-            description: this.description,
-            cost: this.cost,
-            city: this.city,
-            delivery: this.delivery,
-          })
-        : false;
+      if (this.validationParams) this.$emit("done-params");
     },
   },
   mounted() {
-    if(this.ad) {
-    this.title = this.ad.title;
-    this.condition = this.ad.condition;
-    this.description = this.ad.description;
-    this.cost = this.ad.cost;
-    this.city = this.ad.city;
-    this.delivery = this.ad.delivery;
+    if (this.ad) {
+      this.params.title = this.ad.title;
+      this.params.condition = this.ad.condition;
+      this.params.description = this.ad.description;
+      this.params.cost = this.ad.cost;
+      this.params.city = this.ad.city;
+      this.params.delivery = this.ad.delivery;
     }
-  }
-
+  },
 };
 </script>
 

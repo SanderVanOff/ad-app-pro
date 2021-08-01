@@ -1,6 +1,6 @@
 <template>
   <section>
-    <h5 class="mb-3">Добавьте фото
+    <h5 class="mb-3">{{$route.name === 'EditAd' ? "Отредактируйте фото": "Добавьте фото"}}
     <small class="mb-3 text-muted">(c фото ваше объявление будет заметнее)</small>
     </h5>
     
@@ -57,6 +57,12 @@ export default {
     },
   }),
 
+  computed: {
+    title() {
+      return this.$route.name
+    }
+  },
+
   methods: {
     alertInputFile() {
       this.$refs.inputImgFile.click();
@@ -78,11 +84,15 @@ export default {
 
     removeImg(i) {
       this.imagesData.images.splice(i, 1);
+      if (this.imagesData.imagesFiles.length !== 0) this.imagesData.imagesFiles.splice(i, 1);
     },
   },
 
   mounted(){
       this.$emit('done');
+      if(this.ad) {
+        this.imagesData.images = this.ad.images;
+      }
       
   },
 

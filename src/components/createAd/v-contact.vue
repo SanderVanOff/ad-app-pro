@@ -17,6 +17,7 @@
         label-class="label-form"
         error-behavior="value"
         @validation="validationPhone = $event"
+        @input="changeData"
       />
     </div>
     <!-- communication-->
@@ -31,6 +32,7 @@
           MessageAndPhone: 'По телефону и в сообщениях',
         }"
         type="radio"
+        @input="changeData"
       />
     </div>
   </section>
@@ -39,7 +41,7 @@
 <script>
 export default {
   name: "v-contact",
-  props: ['ad'],
+  props: ["ad"],
   data: () => ({
     phone: "",
     communication: "onlyMessage",
@@ -58,10 +60,7 @@ export default {
   watch: {
     isContactDone() {
       if (this.isContactDone) {
-        this.$emit("get-contact", {
-          phone: this.phone,
-          communication: this.communication,
-        });
+        this.$emit("done-params");
       }
     },
   },
@@ -70,11 +69,19 @@ export default {
     replacePhone() {
       this.phone = this.phone.replace(this.patternMobile, "+7 ($2) $3-$4-$5");
     },
+    changeData() {
+      this.$emit("get-contact", {
+        phone: this.phone,
+        communication: this.communication,
+      });
+    },
   },
   mounted() {
-    this.phone = this.ad.phone;
-    this.communication = this.ad.communication;
-  }
+    if (this.ad) {
+      this.phone = this.ad.phone;
+      this.communication = this.ad.communication;
+    }
+  },
 };
 </script>
 
