@@ -25,7 +25,8 @@ export default {
     },
 
     getPhotos(photosData) {
-      this.formValues.mainImage = photosData.mainImage;
+      this.formValues.mainImage = photosData.mainImageIndex;
+      this.formValues.images = photosData.loadedImages;
       this.formValues.imagesFiles = photosData.imagesFiles;
     },
 

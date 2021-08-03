@@ -111,6 +111,23 @@ export default {
         : commit("setAdToState", { ...data, images, mainImage });
     },
 
+    //обновление объявления
+    async updateAd({dispatch}, updateData){
+
+      const currentAd = await dispatch('getAdById', updateData.id);
+
+      try {
+
+        if(updateData.imagesFiles.length) {
+          
+        }
+
+      }catch(e){
+
+      }
+      console.log('currentAd', currentAd)
+    },
+
     //добавление изображений в Storage
     async putImagesToStorage(_, { id, indexMainImage, imagesFiles }) {
       //Если есть изображение, то добавить в Storage, а потом URL добавить в БД

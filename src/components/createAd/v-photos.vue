@@ -3,7 +3,7 @@
     <h5 class="mb-3">{{$route.name === 'EditAd' ? "Отредактируйте фото": "Добавьте фото"}}
     <small class="mb-3 text-muted">(c фото ваше объявление будет заметнее)</small>
     </h5>
-    
+    <div class="d-flex">
     <input
       class="form-control d-none"
       type="file"
@@ -13,13 +13,31 @@
       ref="inputImgFile"
     />
     <div class="create-add-form__images mb-3">
-      <button
-        type="button"
-        class="btn btn-outline-dark btn-add-photo me-2 mb-2"
-        @click="alertInputFile"
+      
+      <!-- LOADED-images -->
+      <div class="loadedImages d-inline" v-if="imagesData.loadedImages">
+      <span
+        class="form-added-image-wrapper position-relative"
+        v-for="(img, i) of imagesData.loadedImages"
+        :key="img"
       >
-        <i class="fas fa-camera-retro fs-1"></i>
-      </button>
+        <button
+          type="button"
+          class="btn-close position-absolute top-minus-5 right-1"
+          @click="removeImg(i, 'loadedImages')"
+          aria-label="Close"
+        ></button>
+        <img
+          :src="img"
+          class="rounded form-added-images me-2 mb-2 cursor-pointer"
+          @click="choiceMainImg(img)"
+          :class="{
+            'border border-success border-3': defaultMainImage === i,
+          }"
+        />
+      </span>
+      </div>
+      <!--  -->
       <span
         class="form-added-image-wrapper position-relative"
         v-for="(img, i) of imagesData.images"
@@ -28,18 +46,26 @@
         <button
           type="button"
           class="btn-close position-absolute top-minus-5 right-1"
-          @click="removeImg(i)"
+          @click="removeImg(i, 'images')"
           aria-label="Close"
         ></button>
         <img
           :src="img"
           class="rounded form-added-images me-2 mb-2 cursor-pointer"
-          @click="choiceMainImg(i)"
+          @click="choiceMainImg(img)"
           :class="{
-            'border border-success border-3': defaultMainImage === i,
+            'border border-success border-3': defaultMainImage === i + isloadedImagesLength,
           }"
         />
       </span>
+      <button
+        type="button"
+        class="btn btn-outline-dark btn-add-photo me-2 mb-2"
+        @click="alertInputFile"
+      >
+        <i class="fas fa-camera-retro fs-1"></i>
+      </button>
+    </div>
     </div>
   </section>
 </template>
@@ -50,8 +76,11 @@ export default {
   props: ['ad'],
   data: () => ({
     defaultMainImage: 0,
+    loadedImagesLength: 0,
+    mainImage: null,
     imagesData: {
-      mainImage: 0,
+      mainImageIndex: 0,
+      loadedImages: [],
       images: [],
       imagesFiles: [],
     },
@@ -60,6 +89,14 @@ export default {
   computed: {
     title() {
       return this.$route.name
+    },
+    isIndexImage() {
+      let images = this.imagesData.loadedImages.concat(this.imagesData.images);
+      let idx = images.findIndex((item) => item === this.mainImage)
+      return idx;
+    },
+    isloadedImagesLength(){
+      return this.imagesData.loadedImages.length
     }
   },
 
@@ -77,28 +114,40 @@ export default {
       });
     },
 
-    choiceMainImg(i) {
-      this.imagesData.mainImage = i;
-      this.defaultMainImage = i;
+    choiceMainImg(image) {
+      this.mainImage = image;
+      //       
     },
 
-    removeImg(i) {
-      this.imagesData.images.splice(i, 1);
-      if (this.imagesData.imagesFiles.length !== 0) this.imagesData.imagesFiles.splice(i, 1);
+    removeImg(i, array) {
+      this.imagesData[array].splice(i, 1);
+      if(array === 'images') this.imagesData.imagesFiles.splice(i, 1);
     },
+
+    sendDataToParent(){
+      this.$emit('get-photos', this.imagesData)
+    }
   },
 
   mounted(){
       this.$emit('done');
       if(this.ad) {
-        this.imagesData.images = this.ad.images;
-      }
-      
+        this.loadedImagesLength = this.ad.images.length;
+        this.imagesData.loadedImages = this.ad.images;
+      }    
   },
 
-  updated(){
-      this.$emit('get-photos', this.imagesData)
-  }
+  watch: {
+    imagesData: {
+      handler: 'sendDataToParent',
+      deep: true
+    },
+
+    isIndexImage(idx){
+      this.imagesData.mainImageIndex = idx;
+      this.defaultMainImage = idx;
+    }
+  },
 };
 </script>
 

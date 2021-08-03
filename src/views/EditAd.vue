@@ -12,16 +12,27 @@
       </h4>
     </div>
 
-    <!--02 params step -->
+    
     <div v-if="currentAd">
-      <pre>{{ formValues }}</pre>
+      <!--01 params step -->
       <v-params :ad="currentAd" @get-params="getParams"></v-params>
 
-      <!--03 contact step -->
+      <!--02 contact step -->
       <v-contact :ad="currentAd" @get-contact="getContact"></v-contact>
 
-      <!--04 photos step -->
+      <!--03 photos step -->
       <v-photos :ad="currentAd" @get-photos="getPhotos"></v-photos>
+      <!--04 save button -->
+      <div class="form-buttons mt-4">
+        <button
+          type="button"
+          class="btn btn-success fs-5"
+          :disabled="!updatedData"
+          @click="savePublicate"
+        >
+          Сохранить
+        </button>
+      </div>
     </div>
   </v-main-section>
 </template>
@@ -48,6 +59,7 @@ export default {
   },
   data: () => ({
     loading: false,
+    updatedData: false,
     categoryAd: "",
     currentAd: "",
     formValues: {
@@ -62,7 +74,15 @@ export default {
   },
 
   methods: {
-    ...mapActions(["fetchCategories", "getAdById"]),
+    ...mapActions(["fetchCategories", "getAdById", "updateAd"]),
+    async savePublicate(){
+      this.loading = true;
+      await this.updateAd({id: this.id, ...this.formValues});
+      this.loading = false;
+    },
+    changeUpdateStatus(){
+      this.updatedData = true;
+    }
   },
 
   async mounted() {
@@ -72,8 +92,16 @@ export default {
     this.categoryAd = (await this.fetchCategories()).find(
       (item) => item.id === this.currentAd.categoryId
     );
+    this.updatedData = false;
     this.loading = false;
   },
+  
+  watch: {
+    formValues: {
+      deep: true,
+      handler: 'changeUpdateStatus'
+    }
+  }
 };
 </script>
 
