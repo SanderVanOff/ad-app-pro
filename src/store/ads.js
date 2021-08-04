@@ -60,7 +60,7 @@ export default {
         .from("ads")
         .select()
         .eq("id", id);
-      return data[0]
+      return data[0];
     },
 
     //создание нового объявления
@@ -112,26 +112,61 @@ export default {
     },
 
     //обновление объявления
-    async updateAd({dispatch}, updateData){
-
-      const currentAd = await dispatch('getAdById', updateData.id);
+    async updateAd({ commit, dispatch }, updateData) {
+      // const currentAd = await dispatch("getAdById", updateData.id);
+      const {
+        condition,
+        title,
+        description,
+        cost,
+        city,
+        delivery,
+        phone,
+        mainImage: indexMainImage,
+        images: oldImage,
+        imagesFiles,
+        communication,
+      } = updateData;
 
       try {
+        //
+        const { data, error } = await supabase
+          .from("ads")
+          .update({
+            condition,
+            title,
+            description,
+            cost,
+            city,
+            delivery,
+            phone,
+            communication,
+            changeDate: new Date(),
+          })
+          .eq("id", updateData.id);
+        //
+        const { images, mainImage } = await dispatch("putImagesToStorage", {
+          id: updateData.id,
+          indexMainImage,
+          imagesFiles,
+          images: oldImage,
+        });
 
-        if(updateData.imagesFiles.length) {
-          
-        }
-
-      }catch(e){
-
+        error
+          ? commit("setError", { type: "error update ad", error })
+          : commit("setAdToState", { ...data, images, mainImage });
+      } catch (e) {
+        console.log(e);
       }
-      console.log('currentAd', currentAd)
     },
 
     //добавление изображений в Storage
-    async putImagesToStorage(_, { id, indexMainImage, imagesFiles }) {
+    async putImagesToStorage(
+      _,
+      { id, indexMainImage, imagesFiles, images = [] }
+    ) {
       //Если есть изображение, то добавить в Storage, а потом URL добавить в БД
-      let images = [];
+      // let images = [];
 
       if (imagesFiles.length) {
         const formData = new FormData();
@@ -141,7 +176,7 @@ export default {
           const { data } = await storage.post("files/", formData, config);
           images.push(data.file);
         }
-      } else {
+      } else if (!imagesFiles.length && !images.length) {
         //Если изображение не добавлено, то нужно поставить стандартное!
         images.push("https://www.medkv.ru/images/detailed/10/no_photo.jpg");
       }
@@ -167,10 +202,10 @@ export default {
           ? commit("deleteLikeFromAd", { id, uid: user.id })
           : commit("addLikeToAd", { id, uid: user.id });
 
-          await supabase
-        .from("ads")
-        .update([{ likes: currentAd.likes }])
-        .eq("id", id);
+        await supabase
+          .from("ads")
+          .update([{ likes: currentAd.likes }])
+          .eq("id", id);
 
         //Добавляем текущему пользователю понравившиеся записи
         let favorites = user.favorites;
@@ -179,7 +214,7 @@ export default {
           ? (favorites = favorites.filter((item) => item !== id))
           : favorites.push(id);
 
-          await supabase
+        await supabase
           .from("users")
           .update([{ favorites }])
           .eq("id", user.id);
@@ -205,11 +240,11 @@ export default {
         }
 
         await supabase
-        .from("ads")
-        .update([{ views: currentAd.views }])
-        .eq("id", id);
+          .from("ads")
+          .update([{ views: currentAd.views }])
+          .eq("id", id);
 
-        commit("updateAdInState", { ...currentAd, views:currentAd.views  });
+        commit("updateAdInState", { ...currentAd, views: currentAd.views });
       } catch (e) {
         console.log(e);
       }
@@ -224,9 +259,9 @@ export default {
         let status = currentAd.status === "closed" ? "moderation" : "closed";
 
         await supabase
-        .from("ads")
-        .update([{ status}])
-        .eq("id", id);
+          .from("ads")
+          .update([{ status }])
+          .eq("id", id);
 
         commit("changeStatusAdFromState", { id: currentAd.id, status });
       } catch (e) {

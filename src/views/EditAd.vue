@@ -21,7 +21,7 @@
       <v-contact :ad="currentAd" @get-contact="getContact"></v-contact>
 
       <!--03 photos step -->
-      <v-photos :ad="currentAd" @get-photos="getPhotos"></v-photos>
+      <v-photos :ad="currentAd" @get-photos="getPhotos" :updated="updated"></v-photos>
       <!--04 save button -->
       <div class="form-buttons mt-4">
         <button
@@ -60,6 +60,7 @@ export default {
   data: () => ({
     loading: false,
     updatedData: false,
+    updated: false,
     categoryAd: "",
     currentAd: "",
     formValues: {
@@ -77,7 +78,9 @@ export default {
     ...mapActions(["fetchCategories", "getAdById", "updateAd"]),
     async savePublicate(){
       this.loading = true;
+      this.updated = true;
       await this.updateAd({id: this.id, ...this.formValues});
+      this.updated = false;
       this.loading = false;
     },
     changeUpdateStatus(){

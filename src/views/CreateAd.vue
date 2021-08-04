@@ -11,7 +11,6 @@
         aria-valuemax="100"
       ></div>
     </div>
-    <pre>{{formValues}}</pre>
     <!-- Loading -->
     <Loader v-if="loading" />
     <!--Form -->
