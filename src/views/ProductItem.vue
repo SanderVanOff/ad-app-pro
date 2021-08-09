@@ -5,160 +5,144 @@
 
     <!-- Product -->
 
-    <div class="product-info" v-else>
+    <div class="product" v-else>
       <!-- image -->
-      <div class="d-flex flex-column postitio-sticky top-0">
-        
-        <div
-          id="carouselExampleIndicators"
-          class="carousel slide"
-          data-bs-ride="carousel"
-        >
-          <div class="carousel-indicators">
-            <button
-              v-for="(item, i) in currentAd.images"
-              :key="item"
-              type="button"
-              data-bs-target="#carouselExampleIndicators"
-              :data-bs-slide-to="i"
-              :class="{ active: currentImage === i }"
-              aria-current="true"
-              :aria-label="`Slide ${i + 1}`"
-            ></button>
-          </div>
-          <div class="carousel-inner">
-            <div
-              class="carousel-item h-50"
-              :data-bs-interval="false"
-              :data="i"
-              :class="{ active: currentImage === i }"
-              v-for="(item, i) of currentAd.images"
-              :key="item"
-            >
-              <img
-                :src="item"
-                class="
-                  d-block
-                  w-100
-                  rounded
-                  img-contain img-thumbnail
-                  cursor-pointer
-                  
-                "
-                alt="..."
-                style="background-color: #212529; height: calc(100vh - 3rem);"
-                data-bs-toggle="modal"
-                data-bs-target="#modalImageId"
-                @click="modalImage = item"
-              />
-            </div>
-          </div>
-          <button
-            class="carousel-control-prev"
-            type="button"
-            data-bs-target="#carouselExampleIndicators"
-            data-bs-slide="prev"
-          >
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button
-            class="carousel-control-next"
-            type="button"
-            data-bs-target="#carouselExampleIndicators"
-            data-bs-slide="next"
-          >
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
+      <div class="product__images p-3">
+        <h3 class="card-title h2 fw-bolder break-word mb-3 pe-4">
+          {{ currentAd.title }}
+        </h3>
+        <div class="product-images__list">
+          <img
+            :src="item"
+            alt=""
+            class="product-images__item rounded"
+            v-for="item of currentAd.images"
+            :key="item"
+            data-bs-toggle="modal"
+            data-bs-target="#modalImageId"
+            @click="modalImage = item"
+          />
         </div>
       </div>
-      <!-- Data -->
-      <div class="d-flex flex-column bg-dark text-white p-0 product-data">
-        <div class="card_info">
-          <div class="card-header bg-danger fs-2">
+
+      <!-- info -->
+      <div class="product__data position-relative">
+        <div class="product-data__info sticky-top pt-5 px-4">
+          <!--стоимость -->
+          <div class="fs-2 p-2">
+            <i class="fas fa-coins me-3"></i>
             {{ getCostInCurrency(currentAd.cost) }}
           </div>
-          <div class="card-body">
-          <h3 class="card-title break-word mb-3 pe-4">{{ currentAd.title }}</h3>
-            <div class="card-body__views mb-2">
-              <div
-                class="text-start mt-4 px-2"
-                v-html="currentAd.description.replaceAll('\n', '<br/>')"
-              ></div>
-              <hr />
-              <p class="card-text">
-                <span class="fw-bold me-2 px-2">Город:</span>
-                {{ currentAd.city }}
-              </p>
+          <hr />
+          <!--Состояние -->
+          <p class="card-text">
+            <span class="fw-bold me-1 px-2">Состояние:</span>
+            {{ isCondition }}
+          </p>
+          <!--Город -->
+          <p class="card-text">
+            <span class="fw-bold me-1 px-2">Город:</span>
+            {{ currentAd.city }}
+          </p>
+          <!--Доставка -->
+          <p class="card-text px-2">
+            <span class="fw-bold me-1">Доставка:</span>
+            {{ isDelivery }}
+          </p>
+          <hr />
+          <!--Описание -->
+          <div
+            class="text-start mt-4 px-2"
+            v-html="currentAd.description.replaceAll('\n', '<br/>')"
+          ></div>
 
-              <p class="card-text">
-                <span class="fw-bold me-2 px-2">Состояние:</span>
-                {{ isCondition }}
-              </p>
+          <hr />
+          <!--Дата добавления -->
+          <div class="card-body__views mb-2">
+            <i class="fas fa-calendar-alt me-2"></i>
+            <span class="me-2">Добавлено:</span>
+            <span class="me-2">{{ getDateAd(currentAd.createDate) }}</span>
+          </div>
 
-              <p class="card-text px-2">
-                <span class="fw-bold me-2">Доставка:</span>
-                {{ isDelivery }}
-              </p>
+          <!--Кол-во просмотров -->
 
-              <hr />
-              <span class="me-2">Добавлено:</span>
-              <span class="me-2">{{ getDateAd(currentAd.createDate) }}</span>
-              <i class="fas fa-calendar-alt"></i>
+          <div class="card-body__views mb-2">
+            <i class="fas fa-eye me-2"></i>
+            <span class="me-2">Просмотров:</span>
+            <span class="me-2">{{
+              currentAd.views ? currentAd.views.length : 0
+            }}</span>
+          </div>
+
+          <!--Избранное -->
+          <div class="card-body__views mb-3">
+            <i class="fas fa-heart me-2"></i>
+            <span class="me-2">В избранном:</span>
+            <span class="me-2">{{
+              currentAd.likes ? currentAd.likes.length : 0
+            }}</span>
+          </div>
+
+          <!--Кнопки -->
+          <button
+            type="button"
+            class="
+            w-100
+              btn btn-secondary
+              mb-2
+              shadow-sm
+              d-flex
+              align-items-center
+              justify-content-center
+              p-2
+            "
+            @click="addLikes(currentAd.id)"
+          >
+            <i class="far fa-heart fs-4 me-3"></i>
+            <span>{{ textFavoriteButton }}</span>
+          </button>
+
+          <hr />
+          <div class="user-ad">
+            <div class="d-flex align-items-center mb-3">
+              <img
+                :src="userAd.avatar"
+                class="me-3 rounded-circle user-avatar"
+                alt="..."
+              />
+              <div>
+                <small class="text-muted">Пользователь:</small>
+                <h5 class="h4">{{ userAd.login }}</h5>
+              </div>
             </div>
 
-            <div class="card-body__views mb-2">
-              <span class="me-2">Просмотров:</span>
-              <span class="me-2">{{
-                currentAd.views ? currentAd.views.length : 0
-              }}</span>
-              <i class="fas fa-eye"></i>
-            </div>
-
-            <div class="card-body__views mb-3">
-              <span class="me-2">В избранном:</span>
-              <span class="me-2">{{
-                currentAd.likes ? currentAd.likes.length : 0
-              }}</span>
-              <i class="fas fa-heart"></i>
-            </div>
-
-            <button
-              type="button"
-              class="btn btn-warning d-flex align-items-center"
-              @click="addLikes(currentAd.id)"
+            <div
+              class="
+                buttons-group
+                d-flex
+                flex-column
+                justify-content-evenly
+                mb-4
+              "
             >
-              <i class="far fa-heart fs-4 me-3"></i>
-              <span>{{ textFavoriteButton }}</span>
-            </button>
-            <hr />
-            <div class="user-info d-flex justify-content-around">
-            
-            <div class="buttons-group d-flex flex-column justify-content-evenly">
               <button
                 type="button"
-                class="btn btn-primary"
+                class="btn btn-dark mb-2"
                 data-bs-toggle="modal"
                 data-bs-target="#modalPhone"
                 :disabled="currentAd.communication === 'OnlyMessage'"
               >
+                <i class="fas fa-binoculars fs-4 me-3"></i>
                 {{
                   currentAd.communication === "OnlyMessage"
                     ? "Номер скрыт"
                     : "Показать номер"
                 }}
               </button>
-              <button type="button" class="btn btn-success">Написать</button>
-            </div>
-            <div class="d-flex flex-column align-items-center">
-              <img
-                :src="userAd.avatar"
-                class="img-thumbnail me-3 rounded-circle user-avatar"
-                alt="..."
-              />
-              <h5 class="card-title mt-3">{{ userAd.login }}</h5>
-            </div>
+              <button type="button" class="btn btn-dark">
+                <i class="fas fa-feather-alt fs-4 me-3"></i>
+                Написать
+              </button>
             </div>
           </div>
         </div>
@@ -263,15 +247,35 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.product-info {
+.product {
   display: grid;
   grid-template-columns: 8fr 4fr;
-  height: calc(100vh - 3.5rem);
+  height: 100%;
   overflow: hidden;
 }
-.product-data {
-  overflow: auto;
+.product-images__list {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr) 250px);
+  grid-auto-flow: dense;
 }
+.product-images__item {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.product-images__item:nth-of-type(2n) {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.product-images__item:nth-of-type(4n) {
+  grid-row: span 3;
+  grid-column: span 3;
+}
+
 .user-avatar {
   width: 100px;
   height: 100px;
