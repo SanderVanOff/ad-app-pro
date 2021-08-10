@@ -92,6 +92,15 @@ const router = new Router({
       }
     },
     {
+      name: "MessageItem",
+      path: "/messages/:id",
+      component: () => import("../views/MessageItem.vue"),
+      meta: {
+        layout: "main",
+        auth: false
+      }
+    },
+    {
       name: "ProductItem",
       path: "/products/:id",
       component: () => import("../views/ProductItem.vue"),

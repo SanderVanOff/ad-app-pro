@@ -139,10 +139,10 @@
                     : "Показать номер"
                 }}
               </button>
-              <button type="button" class="btn btn-dark">
+              <router-link tag="button" class="btn btn-dark" :to="{ name: 'MessageItem', params: { id: currentAd.id } }">
                 <i class="fas fa-feather-alt fs-4 me-3"></i>
                 Написать
-              </button>
+              </router-link>
             </div>
           </div>
         </div>
