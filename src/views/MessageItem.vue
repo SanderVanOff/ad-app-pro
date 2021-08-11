@@ -22,9 +22,8 @@
       </div>
       <!-- card-header -->
       <div class="card-body overflow-auto vh-50 d-flex flex-column">
-        <pre>{{currentChat.messages[0].id}}</pre>
         <p
-          v-for="mess of currentChat.messages"
+          v-for="mess of messages"
           :key="mess.id"
           class="message text-wrap text-start fs-6 fw-normal badge"
           :class="
@@ -33,7 +32,6 @@
               : 'message-customer ms-3 bg-message text-dark'
           "
           v-html="mess.text"
-          
         ></p>
       </div>
       <div class="card-footer text-muted">
@@ -77,14 +75,14 @@ import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "message-item",
-  props: ["id"],
+  props: ["id", "currentUserID"],
   components: { vMainSection },
 
   data: () => ({
     loading: true,
     userAd: null,
     currentAd: null,
-    currentChat: null,
+    currentChat: {},
     message: {
       text: "",
     },
@@ -99,6 +97,7 @@ export default {
       "getUserById",
       "fetchChatByData",
       "createNewChat",
+      "getCurrentUser",
     ]),
 
     async createChat() {
@@ -106,11 +105,11 @@ export default {
         id: `chat-${(Date.now() + Math.floor(Math.random(1000))).toString(32)}`,
         seller: this.userAd,
         customer: this.currentUser,
-        messages: this.messages,
+        messages: [],
         adID: this.currentAd.id,
         dateOfCreating: new Date(),
       };
-      await this.createNewChat(newChat);
+      this.currentChat = await this.createNewChat(newChat);
     },
 
     sendMessage() {
@@ -125,23 +124,24 @@ export default {
       this.messages.push(newMessage);
       this.message.text = "";
       this.$refs.messageField.innerHTML = "";
-
-      if(!('messages' in this.currentChat)) {
-          this.createChat()
-      }
     },
 
     getMessage(e) {
       this.message.text = e.target.innerHTML;
     },
   },
+
   async mounted() {
     this.loading = true;
-
+    const currentUser = await this.getCurrentUser();
+    this.currentChat = await this.fetchChatByData({
+      adID: this.$route.params.id,
+      currentUserID: currentUser.id,
+    });
     this.currentAd = await this.getAdById(this.$route.params.id);
     this.userAd = await this.getUserById(this.currentAd.uid);
-    this.currentChat = await this.fetchChatByData(this.currentAd.id);
-    // this.messages = this.currentChat ? this.currentChat.messages : []
+    if (!this.currentChat) await this.createChat();
+    this.messages = this.currentChat.messages;
     this.loading = false;
   },
 };

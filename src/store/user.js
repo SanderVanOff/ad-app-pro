@@ -80,6 +80,7 @@ export default {
       const user = supabase.auth.user();
       const currentUser = await dispatch("getUserById", user.id);
       commit("setUserToState", currentUser);
+      return currentUser
     },
 
     //GET USER BY ID

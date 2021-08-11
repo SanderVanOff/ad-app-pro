@@ -13,30 +13,30 @@ export default {
   mutations: {},
 
   actions: {
-    async fetchChatByData(_, adID) {
+    async fetchChatByData(_, { adID, currentUserID }) {
       const { data } = await supabase
         .from("chat")
         .select()
         .eq("adID", adID);
 
-        const chat = Object.keys(data).map(key => {
-            return data[key]
-        })
-        console.log('chat', chat)
-        const currentChat = data.length ? data[0] : {};
-        console.log('currentChat', currentChat)
-        return currentChat
-      ;
+      let currentChat = null;
+      console.log('adID', adID)
+
+      data.length
+        ? (currentChat = await data.find(
+            (item) => item.customer.id === currentUserID
+          ))
+        : (currentChat = null);
+      return currentChat;
     },
 
     //создание нового чата
     async createNewChat(_, newChat) {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("chat")
         .insert([{ ...newChat }]);
-
-      console.log("data", data);
-      console.log("error", error);
+      console.log('data', data[0])
+        return data[0]
     },
   },
 
