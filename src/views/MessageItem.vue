@@ -138,6 +138,7 @@ export default {
       adID: this.$route.params.id,
       currentUserID: currentUser.id,
     });
+    
     this.currentAd = await this.getAdById(this.$route.params.id);
     this.userAd = await this.getUserById(this.currentAd.uid);
     if (!this.currentChat) await this.createChat();

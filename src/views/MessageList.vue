@@ -1,8 +1,11 @@
 <template>
   <v-main-section title="Сообщения" icon="fas fa-envelope">
-    <div class="list-group">
+  <!-- Loading -->
+    <Loader v-if="loading" />
+    <!-- Messages list -->
+    <div class="list-group" v-else>
       <!--  -->
-      <a href="message.html" class="list-group-item list-group-item-action">
+      <a href="message.html" class="list-group-item list-group-item-action" v-for="item of messagesList" :key="item.id">
         <div class="d-flex w-100">
           <div class="list-group-item__img me-3">
             <img
@@ -56,11 +59,30 @@
 <script>
 //comoponent
 import vMainSection from "@/components/ui/vMainSection.vue";
+//Vuex
+import {mapActions, mapGetters} from 'vuex'
 export default {
   name: "MessageList",
   components: {
     vMainSection,
   },
+  data: () => ({
+    loading: true,
+    messagesList: []
+  }),
+  computed: {
+    ...mapGetters(['currentUser'])
+  },
+  methods: {
+    ...mapActions(['getUserChats', 'getCurrentUser'])
+  },
+
+  async mounted() {
+    await this.getCurrentUser()
+    this.messagesList = await this.getUserChats(this.currentUser.id)
+
+    this.loading = false;
+  }
 };
 </script>
 

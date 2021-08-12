@@ -13,6 +13,17 @@ export default {
   mutations: {},
 
   actions: {
+
+    async getUserChats(_, id){
+      console.log('id', id)
+      const { data } = await supabase
+        .from("chat")
+        .select()
+        .eq('customer.id', id)
+
+        return data
+    },
+
     async fetchChatByData(_, { adID, currentUserID }) {
       const { data } = await supabase
         .from("chat")
