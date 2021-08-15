@@ -1,6 +1,6 @@
 <template>
   <div class="empty text-center">
-    <p class="empty__text fs-3">Объявлений пока нет!</p>
+    <p class="empty__text fs-3">{{title}}</p>
     <p class="empty__text fs-3">{{ text }}</p>
 
     <router-link
@@ -17,6 +17,10 @@
 export default {
   name: "vNoAd",
   props: {
+    title: {
+      type: String,
+      default: "Объявлений пока нет!"
+    },
     text: {
       type: String,
       default: "Создадим?",

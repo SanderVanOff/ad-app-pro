@@ -98,6 +98,7 @@ export default {
       "fetchChatByData",
       "createNewChat",
       "getCurrentUser",
+      "addNewMessage"
     ]),
 
     async createChat() {
@@ -107,21 +108,23 @@ export default {
         customer: this.currentUser,
         messages: [],
         adID: this.currentAd.id,
+        adTitle: this.currentAd.title,
+        adMainImage: this.currentAd.mainImage,
         dateOfCreating: new Date(),
       };
       this.currentChat = await this.createNewChat(newChat);
     },
 
-    sendMessage() {
+    async sendMessage() {
       const newMessage = {
         id: `mess-${(Date.now() + Math.floor(Math.random(1000))).toString(32)}`,
-        type: "customer",
-        ownerID: "HGvS8THVbudf2tLZF9qQ9ItWMf82",
+        type: this.currentAd.uid === this.currentUser.id ? 'seller' :"customer",
+        ownerID: this.currentUser.id,
         text: this.message.text,
         dateOfCreation: new Date(),
       };
-
-      this.messages.push(newMessage);
+      console.log(this.currentChat.id)
+      await this.addNewMessage({chatID: this.currentChat.id, newMessage})
       this.message.text = "";
       this.$refs.messageField.innerHTML = "";
     },
