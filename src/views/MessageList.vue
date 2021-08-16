@@ -43,7 +43,7 @@
               style="width: 50vw"
               v-if="item.messages.length"
             >
-              {{item.messages[item.messages.length - 1]}}
+              {{item.messages[item.messages.length - 1].text}}
             </p>
           </div>
           <div class="list-group-item__info ms-auto d-flex flex-column">

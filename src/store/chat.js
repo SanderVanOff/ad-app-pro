@@ -15,9 +15,6 @@ export default {
     addChatToState(state, chat){
       state.currentChat = chat
     },
-    pushMessageToState(state, message) {
-      console.log(state, message)
-    }
   },
 
   actions: {
@@ -26,8 +23,9 @@ export default {
       const { data } = await supabase
         .from("chat")
         .select()
-        .eq("customer.id", id);
+        .match({'customer.id': id, 'seller.id': id})
 
+      console.log("data", data)
       return data;
     },
 
@@ -35,14 +33,14 @@ export default {
       const { data } = await supabase
         .from("chat")
         .select()
-        .eq("adID", adID);
-
+        .match({'adID': adID,'customer.id': currentUserID, 'seller.id': currentUserID})
+        // .eq("adID", adID);
+      console.log("data", data)
       let currentChat = null;
-      console.log("adID", adID);
 
       data.length
         ? (currentChat = await data.find(
-            (item) => item.customer.id === currentUserID
+            (item) => item.customer.id === currentUserID || item.seller.id === currentUserID
           ))
         : (currentChat = null);
       commit("addChatToState", currentChat)
@@ -64,15 +62,13 @@ export default {
 
       const messages = data[0].messages;
       messages.push(newMessage)
-      // console.log('messages', messages)
-      // console.log('newMessage', newMessage)
 
-      const { data: message } = await supabase
+      const { data: currentChat } = await supabase
         .from("chat")
         .update({messages})
           .eq("id", chatID);
-
-      commit("pushMessageToState", message)
+          console.log("message", currentChat[0])
+      commit("addChatToState", currentChat[0])
     },
   },
 
