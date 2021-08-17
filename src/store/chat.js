@@ -12,63 +12,71 @@ export default {
   },
 
   mutations: {
-    addChatToState(state, chat){
-      state.currentChat = chat
+    addChatToState(state, chat) {
+      state.currentChat = chat;
     },
   },
 
   actions: {
     async getUserChats(_, id) {
-      console.log("id", id);
+
       const { data } = await supabase
         .from("chat")
         .select()
-        .match({'customer.id': id, 'seller.id': id})
+        .match({ "customer.id": id, "seller.id": id });
 
-      console.log("data", data)
       return data;
     },
 
-    async fetchChatByData({commit}, { adID, currentUserID }) {
+    async fetchChatByData({ commit }, { adID, currentUserID }) {
       const { data } = await supabase
         .from("chat")
         .select()
-        .match({'adID': adID,'customer.id': currentUserID, 'seller.id': currentUserID})
-        // .eq("adID", adID);
-      console.log("data", data)
+        .match({
+          adID: adID,
+          "customer.id": currentUserID,
+          "seller.id": currentUserID,
+        });
+
       let currentChat = null;
 
       data.length
         ? (currentChat = await data.find(
-            (item) => item.customer.id === currentUserID || item.seller.id === currentUserID
+            (item) =>
+              item.customer.id === currentUserID ||
+              item.seller.id === currentUserID
           ))
         : (currentChat = null);
-      commit("addChatToState", currentChat)
+      commit("addChatToState", currentChat);
+
       return currentChat;
     },
 
     //создание нового чата
-    async createNewChat(_, newChat) {
+    async createNewChat({commit}, newChat) {
       const { data } = await supabase.from("chat").insert([{ ...newChat }]);
-      console.log("data", data[0]);
+      commit("addChatToState", data[0]);
       return data[0];
     },
 
-    async addNewMessage({ commit}, { chatID, newMessage }) {
+    async addNewMessage({ commit }, { chatID, newMessage }) {
+      
+
       const { data } = await supabase
         .from("chat")
         .select()
         .eq("id", chatID);
 
       const messages = data[0].messages;
-      messages.push(newMessage)
+      messages.push(newMessage);
 
       const { data: currentChat } = await supabase
         .from("chat")
-        .update({messages})
-          .eq("id", chatID);
-          console.log("message", currentChat[0])
-      commit("addChatToState", currentChat[0])
+        .update({ messages })
+        .eq("id", chatID);
+
+
+      commit("addChatToState", currentChat[0]);
     },
   },
 

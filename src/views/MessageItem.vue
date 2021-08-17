@@ -21,7 +21,10 @@
         </div>
       </div>
       <!-- card-header -->
-      <div class="card-body overflow-auto vh-50 d-flex flex-column">
+      <div
+        class="card-body overflow-auto vh-50 d-flex flex-column"
+        ref="messagesTT"
+      >
         <p
           v-for="mess of currentChat.messages"
           :key="mess.id"
@@ -50,6 +53,7 @@
             aria-label="Example text with button addon"
             aria-describedby="button-addon1"
             @input="(e) => getMessage(e)"
+            @keydown.enter.ctrl="sendMessage"
             ref="messageField"
             contenteditable
           ></div>
@@ -71,7 +75,9 @@
 //comoponent
 import vMainSection from "@/components/ui/vMainSection.vue";
 //vuex
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
+//supabase
+import supabase from "@/plugins/supabase";
 
 export default {
   name: "message-item",
@@ -82,12 +88,16 @@ export default {
     loading: true,
     userAd: null,
     currentAd: null,
+    chat: null,
     message: {
       text: "",
     },
   }),
   computed: {
-    ...mapGetters(["currentUser", "currentChat"]),
+    ...mapGetters(["currentUser"]),
+    currentChat() {
+      return this.$store.getters["currentChat"] || {};
+    },
   },
   methods: {
     ...mapActions([
@@ -98,6 +108,7 @@ export default {
       "getCurrentUser",
       "addNewMessage",
     ]),
+    ...mapMutations(["addChatToState"]),
 
     async createChat() {
       const newChat = {
@@ -121,30 +132,53 @@ export default {
         ownerID: this.currentUser.id,
         text: this.message.text,
         dateOfCreation: new Date(),
+        status: "sent",
       };
 
       await this.addNewMessage({ chatID: this.currentChat.id, newMessage });
       this.message.text = "";
       this.$refs.messageField.innerHTML = "";
+      this.scrollChat();
+    },
+
+    async initRealTimeChat() {
+      this.chat = await supabase
+        .from("chat")
+        .on("*", (message) => {
+          if (message.new) {
+            this.addChatToState(message.new);
+          }
+        })
+        .subscribe();
+    },
+    scrollChat() {
+      this.$refs.messagesTT.scrollTop = this.$refs.messagesTT.scrollHeight;
     },
 
     getMessage(e) {
       this.message.text = e.target.innerHTML;
     },
   },
+  updated() {
+    this.scrollChat();
+  },
 
   async mounted() {
     this.loading = true;
     const currentUser = await this.getCurrentUser();
-    await this.fetchChatByData({
+    const chat = await this.fetchChatByData({
       adID: this.$route.params.id,
       currentUserID: currentUser.id,
     });
 
     this.currentAd = await this.getAdById(this.$route.params.id);
     this.userAd = await this.getUserById(this.currentAd.uid);
-    if (!this.currentChat) await this.createChat();
+    if (!chat) await this.createChat();
+    await this.initRealTimeChat();
     this.loading = false;
+  },
+  destroyed() {
+    supabase.removeSubscription(this.chat);
   },
 };
 </script>
