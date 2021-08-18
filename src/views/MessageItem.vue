@@ -107,6 +107,7 @@ export default {
       "createNewChat",
       "getCurrentUser",
       "addNewMessage",
+      "readMessage"
     ]),
     ...mapMutations(["addChatToState"]),
 
@@ -121,7 +122,7 @@ export default {
         adMainImage: this.currentAd.mainImage,
         dateOfCreating: new Date(),
       };
-      this.currentChat = await this.createNewChat(newChat);
+        await this.createNewChat(newChat);
     },
 
     async sendMessage() {
@@ -175,6 +176,7 @@ export default {
     this.userAd = await this.getUserById(this.currentAd.uid);
     if (!chat) await this.createChat();
     await this.initRealTimeChat();
+    await this.readMessage();
     this.loading = false;
   },
   destroyed() {

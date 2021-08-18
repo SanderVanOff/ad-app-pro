@@ -42,13 +42,15 @@
               class="list-group-item__message text-truncate text-muted"
               style="width: 50vw"
               v-if="item.messages.length"
+              v-html="item.messages[item.messages.length - 1].text"
             >
-              {{item.messages[item.messages.length - 1].text}}
             </p>
           </div>
           <div class="list-group-item__info ms-auto d-flex flex-column">
             <div class="card-body__views mb-2 ms-auto" v-if="item.messages.length">
-              <i class="fas fa-check-double me-2 text-success"></i>
+              <i class="fas fa-check-double me-2 "
+              :class="item.messages[item.messages.length - 1].status === 'sent' ? 'text-secondary': 'text-success'"
+              ></i>
               <span>{{getDateLastMessage(item.messages[item.messages.length - 1].dateOfCreation)}}</span>
             </div>
             <!--  -->

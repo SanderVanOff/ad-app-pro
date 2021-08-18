@@ -26,7 +26,11 @@
 </template>
 
 <script>
+//Vuex
+import {mapActions} from 'vuex';
+
 export default {
+  name: "appSidebar",
   data: () => ({
     links: [
       {
@@ -55,7 +59,24 @@ export default {
         notify: false,
       },
     ],
+    usersChat: null
   }),
+
+  computed: {
+    // numberOfActiveChats(){
+    //   return 
+    // }
+  },
+
+  methods: {
+    ...mapActions(['getUserChats'])
+  },
+
+ async mounted() {
+   this.usersChat = await this.getUserChats();
+
+  }
+
 };
 </script>
 
