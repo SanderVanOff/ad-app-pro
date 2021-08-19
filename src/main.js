@@ -55,20 +55,18 @@ if (!app) {
     store.commit("setUserToState", currentUser);
   });
 
-  // auth.onAuthStateChanged(async(user) => {
-  //   app = new Vue({
-  //     router,
-  //     store,
-  //     render: (h) => h(App)
-  //   }).$mount("#app");
-
-  //   if (user) {
-  //     await store.commit("setToken", { uid: user.uid, token: user._lat });
-  //     await databaseFB.get(`users/${user.uid}.json?auth=${user._lat}`).then((res) => {
-  //       store.commit("setUserToState", { ...res.data });
-  //     });
-  //   } else {
-  //     router.push("/login?USER_NOT_AUTH");
-  //   }
-  // });
+  supabase
+  .from("chat")
+  .on("*", (chat) => {
+    if (chat.new) {
+      const activeMessages = [];
+      for (let item of chat.new.messages) {
+        if (item.status === "sent") {
+          activeMessages.push(item);
+        }
+      }
+      store.commit('pushActiveMessagesToState', activeMessages);
+    }
+  })
+  .subscribe();
 }

@@ -109,7 +109,7 @@ export default {
       "addNewMessage",
       "readMessage"
     ]),
-    ...mapMutations(["addChatToState"]),
+    ...mapMutations(["addChatToState", "pushActiveMessagesToState"]),
 
     async createChat() {
       const newChat = {
@@ -145,9 +145,16 @@ export default {
     async initRealTimeChat() {
       this.chat = await supabase
         .from("chat")
-        .on("*", (message) => {
-          if (message.new) {
-            this.addChatToState(message.new);
+        .on("*", (chat) => {
+          if (chat.new) {
+            // for(let item of chat.new.messages) {
+            //   const activeMessages = []
+            //   if(item.status === 'sent') {
+            //     activeMessages.push(item)
+            //   }
+            //   this.pushActiveMessagesToState(activeMessages)
+            // }
+            this.addChatToState(chat.new);
           }
         })
         .subscribe();
@@ -179,9 +186,9 @@ export default {
     await this.readMessage();
     this.loading = false;
   },
-  destroyed() {
-    supabase.removeSubscription(this.chat);
-  },
+  // destroyed() {
+  //   supabase.removeSubscription(this.chat);
+  // },
 };
 </script>
 

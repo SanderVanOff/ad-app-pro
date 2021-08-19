@@ -8,6 +8,8 @@ import supabase from "@/plugins/supabase";
 export default {
   state: {
     currentChat: null,
+    activeMessages: [],
+    usersChats:[],
     messages: [],
   },
 
@@ -15,16 +17,23 @@ export default {
     addChatToState(state, chat) {
       state.currentChat = chat;
     },
+    pushActiveMessagesToState(state, message){
+      state.activeMessages = message
+    },
+    pushChatsToState(state, chats){
+      state.usersChats = chats
+    }
+
   },
 
   actions: {
     //получение чатов пользователя
-    async getUserChats(_, id) {
+    async getUserChats({commit}, id) {
       const { data } = await supabase
         .from("chat")
         .select()
         .match({ "customer.id": id, "seller.id": id });
-
+      commit("pushChatsToState", data)
       return data;
     },
 
@@ -90,17 +99,22 @@ export default {
     async readMessage({getters, commit}){
       const currentChat = getters['currentChat'];
       const currentUser = getters['currentUser'];
-      if(currentChat.messages[currentChat.messages.length - 1].ownerID !== currentUser.id){
+      const usersChats = getters['usersChats'];
+
+      // if(usersChats.length)
+
+
+
+      if(currentChat.messages.length && currentChat.messages[currentChat.messages.length - 1].ownerID !== currentUser.id){
         const messages = currentChat.messages;
         for (let item of messages) {      
             item.status = "read";
         }
-        console.log('messages', messages)
         const { data } = await supabase
         .from("chat")
         .update({ messages })
         .eq("id", currentChat.id);
-
+        console.log('usersChats', usersChats)
         commit("addChatToState", data[0]);
 
       }
@@ -109,5 +123,7 @@ export default {
 
   getters: {
     currentChat: (s) => s.currentChat,
+    ActiveMessage: s => s.activeMessages,
+    usersChats: s => s.usersChats
   },
 };

@@ -6,7 +6,20 @@
     <ul class="nav h-100">
       <li class="nav-item w-100" v-for="link of links" :key="link.name">
         <router-link
-          class="nav-link link-light bg-dark border border-white rounded h-100 w-100 d-flex flex-column justify-content-center align-items-center position-relative"
+          class="
+            nav-link
+            link-light
+            bg-dark
+            border border-white
+            rounded
+            h-100
+            w-100
+            d-flex
+            flex-column
+            justify-content-center
+            align-items-center
+            position-relative
+          "
           aria-current="page"
           active-class="active"
           exact
@@ -14,8 +27,18 @@
         >
           <span
             v-if="link.notify"
-            class="badge rounded-pill bg-warning text-dark position-absolute top-0 end-0 mt-2 me-2"
-            >2</span
+            class="
+              badge
+              rounded-pill
+              bg-warning
+              text-dark
+              position-absolute
+              top-0
+              end-0
+              mt-2
+              me-2
+            "
+            >{{showActiveMessages ? ActiveMessage.length: '' }}</span
           >
           <span class="icon"><i class="fs-4" :class="link.icon"></i></span>
           <span>{{ link.title }}</span></router-link
@@ -27,7 +50,7 @@
 
 <script>
 //Vuex
-import {mapActions} from 'vuex';
+import { mapGetters } from "vuex";
 
 export default {
   name: "appSidebar",
@@ -59,23 +82,15 @@ export default {
         notify: false,
       },
     ],
-    usersChat: null
   }),
 
   computed: {
-    // numberOfActiveChats(){
-    //   return 
-    // }
+    ...mapGetters(['ActiveMessage', 'currentUser']),
+    showActiveMessages(){
+      const ar = this.ActiveMessage.some(item => item.ownerID !== this.currentUser.id);
+      return ar;
+    }
   },
-
-  methods: {
-    ...mapActions(['getUserChats'])
-  },
-
- async mounted() {
-   this.usersChat = await this.getUserChats();
-
-  }
 
 };
 </script>
