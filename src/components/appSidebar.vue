@@ -26,7 +26,7 @@
           :to="{ name: link.name }"
         >
           <span
-            v-if="link.notify"
+            v-if="link.notify && ActiveMessage.length"
             class="
               badge
               rounded-pill

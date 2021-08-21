@@ -9,7 +9,7 @@ export default {
   state: {
     currentChat: null,
     activeMessages: [],
-    usersChats:[],
+    usersChats: [],
     messages: [],
   },
 
@@ -17,23 +17,22 @@ export default {
     addChatToState(state, chat) {
       state.currentChat = chat;
     },
-    pushActiveMessagesToState(state, message){
-      state.activeMessages = message
+    pushActiveMessagesToState(state, message) {
+      state.activeMessages = message;
     },
-    pushChatsToState(state, chats){
-      state.usersChats = chats
-    }
-
+    pushChatsToState(state, chats) {
+      state.usersChats = chats;
+    },
   },
 
   actions: {
     //получение чатов пользователя
-    async getUserChats({commit}, id) {
+    async getUserChats({ commit }, id) {
       const { data } = await supabase
         .from("chat")
         .select()
         .match({ "customer.id": id, "seller.id": id });
-      commit("pushChatsToState", data)
+      commit("pushChatsToState", data);
       return data;
     },
 
@@ -96,34 +95,42 @@ export default {
     },
 
     //изменение статуса сообщения
-    async readMessage({getters, commit}){
-      const currentChat = getters['currentChat'];
-      const currentUser = getters['currentUser'];
-      const usersChats = getters['usersChats'];
+    async readMessage({ getters, commit }) {
+      const currentChat = getters["currentChat"];
+      const currentUser = getters["currentUser"];
 
-      // if(usersChats.length)
-
-
-
-      if(currentChat.messages.length && currentChat.messages[currentChat.messages.length - 1].ownerID !== currentUser.id){
+      if (
+        currentChat.messages.length &&
+        currentChat.messages[currentChat.messages.length - 1].ownerID !==
+          currentUser.id
+      ) {
         const messages = currentChat.messages;
-        for (let item of messages) {      
-            item.status = "read";
+        for (let item of messages) {
+          item.status = "read";
         }
         const { data } = await supabase
-        .from("chat")
-        .update({ messages })
-        .eq("id", currentChat.id);
-        console.log('usersChats', usersChats)
+          .from("chat")
+          .update({ messages })
+          .eq("id", currentChat.id);
         commit("addChatToState", data[0]);
-
       }
-    }
+    },
+
+    async getNotReadMessages({commit}) {
+      const { data } = await supabase.from("chat").select("messages");
+
+      let notReadMessages=[];
+
+      data.forEach(item => {
+        notReadMessages = (notReadMessages.concat(item.messages)).filter(m => m.status === 'sent')
+      })
+      commit("pushActiveMessagesToState", notReadMessages)
+    },
   },
 
   getters: {
     currentChat: (s) => s.currentChat,
-    ActiveMessage: s => s.activeMessages,
-    usersChats: s => s.usersChats
+    ActiveMessage: (s) => s.activeMessages,
+    usersChats: (s) => s.usersChats,
   },
 };

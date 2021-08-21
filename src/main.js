@@ -59,14 +59,10 @@ if (!app) {
   .from("chat")
   .on("*", (chat) => {
     if (chat.new) {
-      const activeMessages = [];
-      for (let item of chat.new.messages) {
-        if (item.status === "sent") {
-          activeMessages.push(item);
-        }
-      }
-      store.commit('pushActiveMessagesToState', activeMessages);
+      store.dispatch('getNotReadMessages')
     }
   })
   .subscribe();
+
+  store.dispatch('getNotReadMessages')
 }

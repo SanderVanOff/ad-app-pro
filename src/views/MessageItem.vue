@@ -147,13 +147,6 @@ export default {
         .from("chat")
         .on("*", (chat) => {
           if (chat.new) {
-            // for(let item of chat.new.messages) {
-            //   const activeMessages = []
-            //   if(item.status === 'sent') {
-            //     activeMessages.push(item)
-            //   }
-            //   this.pushActiveMessagesToState(activeMessages)
-            // }
             this.addChatToState(chat.new);
           }
         })
