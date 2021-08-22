@@ -6,12 +6,12 @@ import Ads from "./ads";
 import User from "./user";
 import Chat from "./chat";
 import Common from "./common";
-import Errors from './errors'
+import Notification from './notification'
 
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
-  modules: [Ads, User, Chat, Common, Errors]
+  modules: [Ads, User, Chat, Common, Notification]
 });
 
 export default store;
