@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <app-notification v-if="notification"/>
+    <app-notification v-if="notification.length" :notifications="notification"/>
     <component :is="`${layout}-layout`"></component>
   </div>
 </template>
@@ -18,7 +18,7 @@ export default {
   name: "App",
   components: { MainLayout, EmptyLayout, AppNotification },
   computed: {
-    ...mapGetters('notification'),
+    ...mapGetters(['notification']),
     layout() {
       return this.$route.meta.layout || "empty";
     },
@@ -28,4 +28,15 @@ export default {
 </script>
 
 <style>
+.list-item {
+  display: inline-block;
+  margin-right: 10px;
+}
+.list-enter-active, .list-leave-active {
+  transition: all 1s;
+}
+.list-enter, .list-leave-to /* .list-leave-active до версии 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(30px);
+}
 </style>
