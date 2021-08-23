@@ -6,7 +6,7 @@
           <img
             :src="card.mainImage"
             class="img-fluid rounded img-cover"
-            style="width: 200px; height: 180px"
+            style="width: 200px; height: 100%; max-width: 200px;"
           />
         </router-link>
       </div>
