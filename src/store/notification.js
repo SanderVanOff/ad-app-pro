@@ -1,18 +1,23 @@
 export default {
-    state: {
-      notification: []
+  state: {
+    notification: [],
+  },
+
+  mutations: {
+    setNotification(state, notification) {
+      state.notification.push(notification);
+      setTimeout(()=> {
+        state.notification.shift()
+      }, 5000)
+      console.log("notification", notification);
+      
     },
-  
-    mutations: {
-      setNotification(state, notification) {
-        state.notification.push(notification);
-      },
-    },
-  
-    actions: {},
-  
-    getters: {
-      notification: (s) => s.notification
-    }
-  };
-  
+
+  },
+
+  actions: {},
+
+  getters: {
+    notification: (s) => s.notification,
+  },
+};
