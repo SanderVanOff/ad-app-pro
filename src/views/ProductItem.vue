@@ -256,7 +256,7 @@ export default {
 .product-images__list {
   display: grid;
   grid-gap: 10px;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr) 250px);
+  grid-template-columns: repeat(auto-fit, 1fr);
   grid-auto-flow: dense;
 }
 .product-images__item {
