@@ -8,6 +8,7 @@
 
     <!-- own -->
     <div class="list-group">
+    <transition-group name="list">
       <v-list-group-item v-for="card of usersAds" :key="card.id" :card="card">
         <router-link
           tag="button"
@@ -36,6 +37,7 @@
           <span>{{ card.status === "closed" ? "Разместить" : "Закрыть" }}</span>
         </button>
       </v-list-group-item>
+      </transition-group>
     </div>
     <v-modal modalId="removeOwn">
       <div class="modal-content">

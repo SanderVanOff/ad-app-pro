@@ -11,6 +11,7 @@
     />
     <!-- favorites -->
     <div class="list-group" v-else>
+    <transition-group name="list">
       <v-list-group-item
         v-for="card of favoriteAds"
         :key="card.id"
@@ -26,6 +27,7 @@
           <i class="fas fa-trash-alt ms-2"></i>
         </button>
       </v-list-group-item>
+      </transition-group>
       <v-modal modalId="removeFavorite">
             <div class="modal-content">
               <div class="modal-header">
