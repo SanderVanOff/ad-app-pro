@@ -1,38 +1,42 @@
 <template>
-  <div class="alert alert-dismissible fade show position-absolute end-0"
-  :class="`alert-${type}`" 
-  style="z-index: 1999"
-  role="alert">
-    <strong>{{title}}</strong>
-    <div>{{text}}</div> 
-    <button
-      type="button"
-      class="btn-close"
-      data-bs-dismiss="alert"
-      aria-label="Close"
-    ></button>
-  </div>
+  <transition-group name="list" tag="div" class="notify-list position-absolute end-0">
+
+    <div
+    v-for="notify of notifications"
+    :key="notify.id"
+      class="alert alert-dismissible fade show "
+      :class="`alert-${notify.type}`"
+      style="z-index: 1999; width: 300px;"
+      role="alert"
+    >
+      <strong>{{ notify.title }}</strong>
+      <div>{{ notify.text }}</div>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+  </transition-group>
 </template>
 
 <script>
 export default {
-    name: "appNotification",
-    props: {
-        title: {
-            type: String,
-            default: "Что-то пошло не так"
-        },
-        text: {
-            type: String,
-            default: "Попробуй перезагрузить страницу"
-        },
-        type: {
-            type: String,
-            default: "warning"
-        }
-    }
+  name: "appNotification",
+  props: {
+    notifications: {
+      type: Array,
+      default: () => ([{
+        title: "Что-то пошло не так",
+        text: "Попробуй перезагрузить страницу",
+        type: "warning",
+      }]),
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
+
 </style>
