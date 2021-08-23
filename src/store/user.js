@@ -1,5 +1,7 @@
 import { storage } from "@/plugins/axios";
 import supabase from "@/plugins/supabase";
+import {getErrorMessage} from "@/utils/errorsMessages";
+import { getSuccessMessage } from "@/utils/successMessages";
 
 const config = {
   headers: { "content-type": "multipart/form-data" },
@@ -42,14 +44,41 @@ export default {
         email,
         password,
       });
-      dispatch("addUserInfoToDB", { id: user.id, email, login, avatar });
-      commit("setError", { type: "error SignUp", error });
+
+      if (error) {
+        commit("setNotification", {
+          id: (Date.now() + Math.floor(Math.random(1000))).toString(32),
+          type: "danger",
+          title: "Ошибка",
+          text: getErrorMessage('EMAIL_HAS_BEEN_REGISTER'),
+          message: error.message,
+        });
+        throw Error;
+      } else {
+        await dispatch("addUserInfoToDB", {
+          id: user.id,
+          email,
+          login,
+          avatar,
+        });
+      }
       commit("setLoading", false);
     },
 
     //ДОБАВЛЕНИЕ ИНФОРМАЦИИ О ПОЛЬЗОВАТЕЛЕ В БАЗУ
-    async addUserInfoToDB(_, { id, email, login, avatar }) {
-      await supabase.from("users").insert([{ id, email, login, avatar }]);
+    async addUserInfoToDB({ commit }, { id, email, login, avatar }) {
+      const { error } = await supabase
+        .from("users")
+        .insert([{ id, email, login, avatar }]);
+      if (error) {
+        commit("setNotification", {
+          id: (Date.now() + Math.floor(Math.random(1000))).toString(32),
+          type: "danger",
+          title: "Ошибка",
+          text: getErrorMessage('ERROR_OCCURRED_DATA'),
+          message: error.message,
+        });
+      }
     },
 
     //АУТЕНТИФИКАЦИЯ
@@ -60,11 +89,21 @@ export default {
         email,
         password,
       });
-      error
-        ? commit("setError", { type: "error SignUp", error })
-        : commit("setToken", { uid: user.id, token: session.access_token });
-      const currentUser = await dispatch("getUserById", user.id);
-      commit("setUserToState", currentUser);
+
+      if (error) {
+        commit("setNotification", {
+          id: (Date.now() + Math.floor(Math.random(1000))).toString(32),
+          type: "danger",
+          title: "Ошибка",
+          text: getErrorMessage('EMAIL_OR_PASSWORD_INVALID'),
+          message: error.message,
+        });
+        throw Error;
+      } else {
+        commit("setToken", { uid: user.id, token: session.access_token });
+        const currentUser = await dispatch("getUserById", user.id);
+        commit("setUserToState", currentUser);
+      }
       commit("setLoading", false);
     },
     //LOGOUT
@@ -80,7 +119,7 @@ export default {
       const user = supabase.auth.user();
       const currentUser = await dispatch("getUserById", user.id);
       commit("setUserToState", currentUser);
-      return currentUser
+      return currentUser;
     },
 
     //GET USER BY ID
@@ -90,7 +129,16 @@ export default {
         .from("users")
         .select()
         .eq("id", id);
-      commit("setError", { type: "error getUserById", error });
+
+      if (error) {
+        commit("setNotification", {
+          id: (Date.now() + Math.floor(Math.random(1000))).toString(32),
+          type: "danger",
+          title: "Ошибка",
+          text: getErrorMessage('ERROR_GET_USER_DATA'),
+          message: error.message,
+        });
+      }
       return data[0];
     },
 
@@ -117,9 +165,23 @@ export default {
           .update({ avatar: avatarURL })
           .eq("id", user.id);
       }
-      error
-        ? commit("setError", { type: "error updateUser", error })
-        : commit("setUserToState", data[0]);
+      if(error) {
+        commit("setNotification", {
+          id: (Date.now() + Math.floor(Math.random(1000))).toString(32),
+          type: "danger",
+          title: "Ошибка",
+          text: getErrorMessage('ERROR_UPDATE_USER_DATA'),
+          message: error.message,
+        });
+      } else {
+        commit("setUserToState", data[0]);
+        commit("setNotification", {
+          id: (Date.now() + Math.floor(Math.random(1000))).toString(32),
+          type: "success",
+          title: "Успешно",
+          text: getSuccessMessage('SUCCESS_UPDATE_USER'),
+        })
+      }
     },
   },
 

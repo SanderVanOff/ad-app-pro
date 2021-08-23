@@ -1,5 +1,8 @@
 import { storage } from "@/plugins/axios";
 import supabase from "@/plugins/supabase";
+import { getErrorMessage } from "@/utils/errorsMessages";
+import { getSuccessMessage } from "@/utils/successMessages";
+
 //константы
 const config = {
   headers: { "content-type": "multipart/form-data" },
@@ -45,14 +48,33 @@ export default {
     async fetchAdsFromDB({ commit }) {
       const { data: allAds, error } = await supabase.from("ads").select();
       commit("setAdsToState", allAds);
-      commit("setError", { type: "error fetchAds", error });
-      return allAds;
+      if (error) {
+        commit("setNotification", {
+          id: (Date.now() + Math.floor(Math.random(1000))).toString(32),
+          type: "danger",
+          title: "Ошибка",
+          text: getErrorMessage("ERROR_FETCH_AD_DATA"),
+          message: error.message,
+        });
+      } else {
+        return allAds;
+      }
     },
 
     async fetchCategories({ commit }) {
       const { data, error } = await supabase.from("categories").select();
-      commit("setError", { type: "error fetch categories", error });
-      return data;
+
+      if (error) {
+        commit("setNotification", {
+          id: (Date.now() + Math.floor(Math.random(1000))).toString(32),
+          type: "danger",
+          title: "Ошибка",
+          text: getErrorMessage("ERROR_FETCH_CATEGORIES_DATA"),
+          message: error.message,
+        });
+      } else {
+        return data;
+      }
     },
     //Получение объявления по ИД
     async getAdById(_, id) {
@@ -106,9 +128,24 @@ export default {
         indexMainImage,
         imagesFiles,
       });
-      error
-        ? commit("setError", { type: "error create ad", error })
-        : commit("setAdToState", { ...data, images, mainImage });
+
+      if (error) {
+        commit("setNotification", {
+          id: (Date.now() + Math.floor(Math.random(1000))).toString(32),
+          type: "danger",
+          title: "Ошибка",
+          text: getErrorMessage("ERROR_CREATE_NEW_AD"),
+          message: error.message,
+        });
+      } else {
+        commit("setAdToState", { ...data, images, mainImage });
+        commit("setNotification", {
+          id: (Date.now() + Math.floor(Math.random(1000))).toString(32),
+          type: "success",
+          title: "Успешно",
+          text: getSuccessMessage("SUCCESS_CREATE_AD"),
+        })
+      }
     },
 
     //обновление объявления
@@ -128,35 +165,45 @@ export default {
         communication,
       } = updateData;
 
-      try {
-        //
-        const { data, error } = await supabase
-          .from("ads")
-          .update({
-            condition,
-            title,
-            description,
-            cost,
-            city,
-            delivery,
-            phone,
-            communication,
-            changeDate: new Date(),
-          })
-          .eq("id", updateData.id);
-        //
-        const { images, mainImage } = await dispatch("putImagesToStorage", {
-          id: updateData.id,
-          indexMainImage,
-          imagesFiles,
-          images: oldImage,
-        });
+      //
+      const { data, error } = await supabase
+        .from("ads")
+        .update({
+          condition,
+          title,
+          description,
+          cost,
+          city,
+          delivery,
+          phone,
+          communication,
+          changeDate: new Date(),
+        })
+        .eq("id", updateData.id);
+      //
+      const { images, mainImage } = await dispatch("putImagesToStorage", {
+        id: updateData.id,
+        indexMainImage,
+        imagesFiles,
+        images: oldImage,
+      });
 
-        error
-          ? commit("setError", { type: "error update ad", error })
-          : commit("setAdToState", { ...data, images, mainImage });
-      } catch (e) {
-        console.log(e);
+      if (error) {
+        commit("setNotification", {
+          id: (Date.now() + Math.floor(Math.random(1000))).toString(32),
+          type: "danger",
+          title: "Ошибка",
+          text: getErrorMessage("ERROR_UPDATE_AD"),
+          message: error.message,
+        });
+      } else {
+        commit("setAdToState", { ...data, images, mainImage });
+        commit("setNotification", {
+          id: (Date.now() + Math.floor(Math.random(1000))).toString(32),
+          type: "success",
+          title: "Успешно",
+          text: getSuccessMessage("SUCCESS_UPDATE_AD"),
+        })
       }
     },
 
@@ -166,7 +213,6 @@ export default {
       { id, indexMainImage, imagesFiles, images = [] }
     ) {
       //Если есть изображение, то добавить в Storage, а потом URL добавить в БД
-      // let images = [];
 
       if (imagesFiles.length) {
         const formData = new FormData();
@@ -254,19 +300,35 @@ export default {
     async changeStatusAdById({ getters, commit }, id) {
       const allAds = getters["allAds"];
 
-      try {
+
         const currentAd = allAds.find((item) => item.id === id);
         let status = currentAd.status === "closed" ? "moderation" : "closed";
 
-        await supabase
+        const {error} = await supabase
           .from("ads")
           .update([{ status }])
           .eq("id", id);
 
-        commit("changeStatusAdFromState", { id: currentAd.id, status });
-      } catch (e) {
-        console.log(e);
-      }
+          if(error) {
+            commit("setNotification", {
+              id: (Date.now() + Math.floor(Math.random(1000))).toString(32),
+              type: "danger",
+              title: "Ошибка",
+              text: getErrorMessage("ERROR_UPDATE_AD"),
+              message: error.message,
+            });
+          }else {
+            commit("changeStatusAdFromState", { id: currentAd.id, status });
+            let text = status === "closed" ? "SUCCESS_CLOSE_AD" : "SUCCESS_OPEN_AD"
+            commit("setNotification", {
+              id: (Date.now() + Math.floor(Math.random(1000))).toString(32),
+              type: "success",
+              title: "Успешно",
+              text: getSuccessMessage(text),
+            })
+          }
+
+        
     },
   },
 
