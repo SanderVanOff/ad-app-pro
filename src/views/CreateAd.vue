@@ -119,6 +119,9 @@ export default {
     nextStep() {
       this.counter++;
       this.done = false;
+      if(this.counter === 3) {
+        this.done = true;
+      }
     },
 
     prevStep() {
