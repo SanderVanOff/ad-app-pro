@@ -88,7 +88,7 @@
             type="button"
             class="
             w-100
-              btn btn-secondary
+              btn btn-dark
               mb-2
               shadow-sm
               d-flex
@@ -130,11 +130,11 @@
                 class="btn btn-dark mb-2"
                 data-bs-toggle="modal"
                 data-bs-target="#modalPhone"
-                :disabled="currentAd.communication === 'OnlyMessage'"
+                :disabled="currentAd.communication === 'onlyMessage'"
               >
                 <i class="fas fa-binoculars fs-4 me-3"></i>
                 {{
-                  currentAd.communication === "OnlyMessage"
+                  currentAd.communication === "onlyMessage"
                     ? "Номер скрыт"
                     : "Показать номер"
                 }}
