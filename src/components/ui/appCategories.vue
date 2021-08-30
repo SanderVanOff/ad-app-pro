@@ -1,11 +1,11 @@
 <template>
-  <div class="btn-group pb-3 d-flex" role="group" aria-label="Basic outlined example">
+  <div class="categories-group btn-group pb-3 d-flex" role="group" aria-label="Basic outlined example">
     <button 
     v-for="category of categories"
     :key="category.id"
     :ref="`category${category.id}`"
     @click="$emit('changeCategory', category.id), getRefs(category.id)"
-    type="button" class="btn btn-outline-dark" style="font-size: 0.7rem!important;">{{category.title}}</button>
+    type="button" class="categories-group__btn btn btn-outline-dark" style="font-size: 0.7rem!important;">{{category.title}}</button>
   </div>
 </template>
 
@@ -30,4 +30,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+@media (max-width:576px) {
+  .categories-group {
+    flex-wrap: wrap;
+
+    &__btn {
+    border-radius: 0.25rem !important;
+    margin: 5px;
+    }
+  }
+}
 </style>

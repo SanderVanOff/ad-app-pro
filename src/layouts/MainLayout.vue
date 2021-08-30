@@ -22,5 +22,17 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+.main {
+  display: grid;
+  grid-template-columns: 1fr 11fr;
+}
+
+@media (max-width:576px) {
+  .main {
+  display: grid;
+  grid-template-rows: 2fr;
+  grid-template-columns: 12fr;
+}
+}
 </style>

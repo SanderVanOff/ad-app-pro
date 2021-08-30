@@ -86,5 +86,41 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 1rem;
+}
+
+@media (max-width: 1440px) {
+  .cards {
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 1rem;
+  }
+}
+
+@media (max-width: 1216px) {
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 1rem;
+  }
+}
+
+@media (max-width: 991px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 2rem;
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width:576px) {
+  .cards {
+    grid-template-columns: repeat(1, 1fr);
+    grid-gap: 1rem;
+    justify-content: center;
+  }
+}
 </style>

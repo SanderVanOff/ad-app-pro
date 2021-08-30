@@ -1,6 +1,12 @@
 <template>
   <nav
-    class="navbar navbar-expand-lg navbar-light bg-light shadow rounded-bottom fixed-top"
+    class="
+      navbar navbar-expand-lg navbar-light
+      bg-light
+      shadow
+      rounded-bottom
+      fixed-top
+    "
   >
     <div class="container-fluid d-flex justify-contetn-between">
       <a class="navbar-brand d-flex align-items-center" href="#">
@@ -15,12 +21,12 @@
           :to="{ name: 'createAd' }"
         >
           <span class="btn-text">Разместить объявление</span>
-          <i class="fas fa-plus-circle ms-2"></i>
+          <i class="btn-icon fas fa-plus-circle"></i>
         </router-link>
 
         <button class="btn btn-dark" @click="logout">
           <span class="btn-text">Выйти</span>
-          <i class="fas fa-door-open ms-2"></i>
+          <i class="btn-icon fas fa-door-open"></i>
         </button>
       </div>
     </div>
@@ -38,5 +44,16 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+
+.btn-text {
+  margin-right: .5rem;
+}
+
+@media (max-width: 576px) {
+  .btn-text {
+    display: none;
+    margin-right: 0;
+  }
+}
 </style>

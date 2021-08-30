@@ -12,14 +12,14 @@
       <v-list-group-item v-for="card of usersAds" :key="card.id" :card="card">
         <router-link
           tag="button"
-          class="btn btn-secondary me-3 d-flex align-items-center"
+          class="btn btn-secondary mb-2 mb-md-0 me-md-3  d-flex align-items-center justify-content-center"
           :to="{ name: 'EditAd', params: { id: card.id } }"
         >
           <i class="fas fa-edit me-2"></i>
           <span>Редактировать</span></router-link
         >
         <button
-          class="btn d-flex align-items-center"
+          class="btn d-flex align-items-center justify-content-center"
           :class="card.status === 'closed' ? 'btn-success' : 'btn-danger'"
           data-bs-toggle="modal"
           data-bs-target="#removeOwn"

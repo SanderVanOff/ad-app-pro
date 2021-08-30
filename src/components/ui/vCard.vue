@@ -75,6 +75,12 @@ export default {
 .card-image {
   height: 230px;
 }
+
+@media (max-width: 991px) {
+  .card-image {
+  height: 250px;
+}
+}
 .component-fade-enter-active,
 .component-fade-leave-active {
   transition: opacity 0.3s ease;
@@ -83,4 +89,12 @@ export default {
 .component-fade-leave-to {
   opacity: 0;
 }
+
+@media (max-width: 576px) {
+
+  .card:last-child {
+    margin-bottom: 3.5rem;
+  }
+}
+
 </style>

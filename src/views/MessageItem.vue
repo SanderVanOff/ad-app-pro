@@ -205,4 +205,13 @@ export default {
   padding: 12px;
   align-self: flex-start;
 }
+
+
+@media (max-width: 575px) {
+
+.card-body {
+  height: 45vh !important;
+  }
+  
+}
 </style>

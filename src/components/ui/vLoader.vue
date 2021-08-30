@@ -10,7 +10,7 @@ export default {};
 
 <style scoped>
 .overlay {
-  height: 100%;
+  height: calc(100vh - 3.5rem);
   position: absolute;
   top: 0;
   left: 0;

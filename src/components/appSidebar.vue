@@ -1,7 +1,6 @@
 <template>
   <aside
     class="text-light p-0 position-sticky left-0"
-    style="height: calc(100vh - 3.5rem); top: 3.5rem"
   >
     <ul class="nav h-100">
       <li class="nav-item w-100" v-for="link of links" :key="link.name">
@@ -38,10 +37,10 @@
               mt-2
               me-2
             "
-            >{{showActiveMessages ? ActiveMessage.length: '' }}</span
+            >{{ showActiveMessages ? ActiveMessage.length : "" }}</span
           >
           <span class="icon"><i class="fs-4" :class="link.icon"></i></span>
-          <span>{{ link.title }}</span></router-link
+          <span class="btn-text">{{ link.title }}</span></router-link
         >
       </li>
     </ul>
@@ -85,18 +84,43 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(['ActiveMessage', 'currentUser']),
-    showActiveMessages(){
-      const ar = this.ActiveMessage.some(item => item.ownerID !== this.currentUser.id);
+    ...mapGetters(["ActiveMessage", "currentUser"]),
+    showActiveMessages() {
+      const ar = this.ActiveMessage.some(
+        (item) => item.ownerID !== this.currentUser.id
+      );
       return ar;
-    }
+    },
   },
-
 };
 </script>
 
 <style lang="scss" scoped>
 aside {
   z-index: 2;
+  height: calc(100vh - 3.5rem); 
+  top: 3.5rem
+}
+
+@media (max-width: 576px) {
+  aside {
+    position: fixed !important;
+    height: auto;
+    bottom: 0;
+    width: 100%;
+    top: auto;
+  }
+
+  .nav {
+    height: auto !important;
+    flex-wrap: nowrap;
+  }
+  .nav-item {
+    height: 60px;
+  }
+
+  .btn-text {
+  display: none;
+  }
 }
 </style>
