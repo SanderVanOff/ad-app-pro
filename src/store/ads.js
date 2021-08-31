@@ -19,7 +19,7 @@ export default {
     },
 
     setAdToState(state, ad) {
-      state.ads.push(ad);
+      state.ads.unshift(ad);
     },
 
     updateAdInState(state, payload) {
