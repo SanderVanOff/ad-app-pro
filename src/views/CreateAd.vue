@@ -34,7 +34,7 @@
         ></v-photos>
         <!--04 contact step -->
         <v-contact v-if="counter === 4" 
-        @done-params="doneParams"
+        @done-params="doneParams(true)"
         @get-contact="getContact"></v-contact>
         <!--buttons next/prev -->
       </keep-alive>
@@ -122,6 +122,9 @@ export default {
       if(this.counter === 3) {
         this.done = true;
       }
+      if(this.contacts) {
+        this.done = true;
+      }
     },
 
     prevStep() {
@@ -155,4 +158,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+@media (max-width: 576px) {
+.form-buttons {
+
+  margin-bottom: 3.5rem;
+}
+  
+}
 </style>

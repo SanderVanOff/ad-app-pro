@@ -9,10 +9,10 @@
     "
   >
     <div class="container-fluid d-flex justify-contetn-between">
-      <a class="navbar-brand d-flex align-items-center" href="#">
+      <router-link :to="{name: 'Home'}" class="navbar-brand d-flex align-items-center">
         <i class="fas fa-store me-2"></i>
         <span>ОБЪЯВИТУС</span>
-      </a>
+      </router-link>
 
       <div class="buttons-group">
         <router-link

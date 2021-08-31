@@ -95,6 +95,8 @@
               align-items-center
               justify-content-center
               p-2
+              py-lg-2
+              py-4
             "
             @click="addLikes(currentAd.id)"
           >
@@ -122,12 +124,12 @@
                 d-flex
                 flex-column
                 justify-content-evenly
-                mb-4
               "
             >
               <button
                 type="button"
-                class="btn btn-dark mb-2"
+                class="btn btn-dark mb-2 py-lg-2
+              py-4"
                 data-bs-toggle="modal"
                 data-bs-target="#modalPhone"
                 :disabled="currentAd.communication === 'onlyMessage'"
@@ -139,7 +141,8 @@
                     : "Показать номер"
                 }}
               </button>
-              <router-link tag="button" :disabled="currentAd.uid === currentUser.id" class="btn btn-dark" :to="{ name: 'MessageItem', params: { id: currentAd.id } }">
+              <router-link tag="button" :disabled="currentAd.uid === currentUser.id" class="btn btn-dark py-lg-2
+              py-4" :to="{ name: 'MessageItem', params: { id: currentAd.id } }">
                 <i class="fas fa-feather-alt fs-4 me-3"></i>
                 Написать
               </router-link>
@@ -281,9 +284,23 @@ export default {
   height: 100px;
   object-fit: cover;
 }
+.buttons-group {
+  margin-bottom: 1.5rem;
+}
 .modal-img {
   width: 100%;
   object-fit: contain;
   height: 100vh;
+}
+
+@media (max-width: 992px) {
+.product {
+  grid-template-columns: 12fr;
+}
+
+.buttons-group {
+  margin-bottom: 5rem;
+}
+  
 }
 </style>

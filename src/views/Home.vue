@@ -80,7 +80,7 @@ export default {
     this.loading = true;
     this.categories = await this.fetchCategories()
     this.ads = await this.fetchAdsFromDB();
-    this.filteredAd = this.ads;
+    this.filteredAd = this.ads.sort((a, b) => a.id < b.id);
     this.loading = false;
   },
 };

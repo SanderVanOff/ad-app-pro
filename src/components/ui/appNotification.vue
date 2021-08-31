@@ -1,5 +1,5 @@
 <template>
-  <transition-group name="list" tag="div" class="notify-list position-absolute end-0">
+  <transition-group name="list" tag="div" class="notify-list position-fixed end-0" style="z-index: 1999">
 
     <div
     v-for="notify of notifications"

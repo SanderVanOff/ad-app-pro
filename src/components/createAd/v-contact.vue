@@ -1,5 +1,5 @@
 <template>
-  <section class="col-6">
+  <section class="col-lg-6 col-md-8 col-12">
     <h5 class="mb-3">Контактная информация</h5>
     <!-- phone-->
     <div class="form-control mb-3">
@@ -82,6 +82,12 @@ export default {
       this.communication = this.ad.communication;
     }
   },
+
+  updated(){
+    if (this.isContactDone) {
+        this.$emit("done-params");
+      }
+  }
 };
 </script>
 

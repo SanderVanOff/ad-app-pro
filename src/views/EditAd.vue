@@ -5,14 +5,13 @@
     <!-- Data -->
 
     <!-- Category -->
-    <div class="form-control mb-3 w-50">
+    <div class="form-control form-control_categories mb-3">
       <h4 class="title mb-3 mt-3">
         Категория:
         <small class="text-muted">{{ categoryAd.title }}</small>
       </h4>
     </div>
 
-    
     <div v-if="currentAd">
       <!--01 params step -->
       <v-params :ad="currentAd" @get-params="getParams"></v-params>
@@ -21,13 +20,17 @@
       <v-contact :ad="currentAd" @get-contact="getContact"></v-contact>
 
       <!--03 photos step -->
-      <v-photos :ad="currentAd" @get-photos="getPhotos" :updated="updated"></v-photos>
+      <v-photos
+        :ad="currentAd"
+        @get-photos="getPhotos"
+        :updated="updated"
+      ></v-photos>
       <!--04 save button -->
       <div class="form-buttons mt-4">
         <button
           type="button"
-          class="btn btn-success fs-5"
-          :disabled="!updatedData"
+          class="btn-save btn btn-success fs-5"
+          :disabled="!updatedData || loading"
           @click="savePublicate"
         >
           Сохранить
@@ -76,16 +79,16 @@ export default {
 
   methods: {
     ...mapActions(["fetchCategories", "getAdById", "updateAd"]),
-    async savePublicate(){
+    async savePublicate() {
       this.loading = true;
       this.updated = true;
-      await this.updateAd({id: this.id, ...this.formValues});
+      await this.updateAd({ id: this.id, ...this.formValues });
       this.updated = false;
       this.loading = false;
     },
-    changeUpdateStatus(){
+    changeUpdateStatus() {
       this.updatedData = true;
-    }
+    },
   },
 
   async mounted() {
@@ -98,15 +101,39 @@ export default {
     this.updatedData = false;
     this.loading = false;
   },
-  
+
   watch: {
     formValues: {
       deep: true,
-      handler: 'changeUpdateStatus'
-    }
-  }
+      handler: "changeUpdateStatus",
+    },
+  },
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+.form-control_categories {
+  width: 50% !important;
+  }
+
+@media (max-width: 991px) {
+.form-control_categories {
+  width: 66% !important;
+  }
+  .form-buttons {
+    margin-bottom: 3.5rem;
+  }
+}
+
+
+@media (max-width: 767px) {
+.form-control_categories {
+  width: 100% !important;
+  }
+}
+
+
+@media (max-width: 576px) {
+
+}
 </style>

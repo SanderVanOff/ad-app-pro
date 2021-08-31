@@ -2,7 +2,7 @@
   <div class="main-layout">
     <app-navbar></app-navbar>
     <main class="main position-relative pt-5 mt-2">
-      <app-sidebar></app-sidebar>
+      <app-sidebar v-if="$route.name !== 'MessageItem'"></app-sidebar>
       <router-view />
     </main>
   </div>

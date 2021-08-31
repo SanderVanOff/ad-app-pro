@@ -1,18 +1,23 @@
 <template>
-  <v-main-section title="Сообщения" icon="fas fa-envelope">
+  <v-main-section>
     <!-- Loading -->
     <Loader v-if="loading" />
     <!-- messages -->
     <div class="card px-0 overflow-hidden col-12" v-else>
       <div class="card-header">
         <div class="list-group-item__text">
-          <div class="list-group-item__seller d-flex align-items-center mb-2">
+          <div class="list-group-item__seller d-flex align-items-center justify-content-between mb-2">
+          <button type="button" class="btn btn-dark me-2"
+          @click="$router.back()"
+          ><i class="fs-4 fas fa-long-arrow-alt-left"></i></button>
+          <div class="d-flex align-items-center">
             <img
               :src="userAd.avatar"
               class="me-3 rounded-circle user-avatar"
               alt="..."
             />
             <h5 class="card-title">{{ userAd.login }}</h5>
+            </div>
           </div>
           <h6 class="mb-1">
             <i class="fas fa-shopping-bag fs-4 me-3"></i>
@@ -22,7 +27,7 @@
       </div>
       <!-- card-header -->
       <div
-        class="card-body overflow-auto vh-50 d-flex flex-column"
+        class="card-body overflow-auto d-flex flex-column"
         ref="messagesTT"
       >
         <p
@@ -206,12 +211,8 @@ export default {
   align-self: flex-start;
 }
 
-
-@media (max-width: 575px) {
-
 .card-body {
-  height: 45vh !important;
-  }
-  
+  height: 60vh;
 }
+
 </style>

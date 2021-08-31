@@ -1,5 +1,5 @@
 <template>
-  <section class="paramsAd col-6">
+  <section class="paramsAd col-lg-6 col-md-8 col-12">
     <!--condition-->
     <div class="form-control mb-3">
       <label class="fw-bold me-2 mb-2">Состояние:</label>
@@ -37,6 +37,8 @@
         name="description"
         v-model="params.description"
         resize="none"
+        rows="12"
+        style="resize: none;"
         validation="required|min:10,length"
         validation-name="Описание"
         error-behavior="value"
