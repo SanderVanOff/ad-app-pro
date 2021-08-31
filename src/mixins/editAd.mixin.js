@@ -1,6 +1,7 @@
 export default {
   data: () => ({
     done: false,
+    contacts: false,
     formValues: {
       condition: "use",
       title: "",
@@ -40,8 +41,9 @@ export default {
       this.formValues.communication = communication;
     },
 
-    doneParams(){
+    doneParams(value = false){
         this.done = true
+        this.contacts = value;
       },
   },
 };
