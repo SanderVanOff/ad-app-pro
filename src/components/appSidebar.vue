@@ -22,7 +22,7 @@
           aria-current="page"
           active-class="active"
           exact
-          :to="{ name: link.name }"
+          :to="{ name: link.name}"
         >
           <span
             v-if="link.notify && ActiveMessage.length"

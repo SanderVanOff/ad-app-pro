@@ -9,10 +9,24 @@
     "
   >
     <div class="container-fluid d-flex justify-contetn-between">
-      <router-link :to="{name: 'Home'}" class="navbar-brand d-flex align-items-center">
+    
+      <router-link
+        v-if="$route.name !== 'MessageItem'"
+        :to="{ name: 'Home' }"
+        class="navbar-brand d-flex align-items-center"
+      >
         <i class="fas fa-store me-2"></i>
         <span>ОБЪЯВИТУС</span>
       </router-link>
+
+      <button
+        v-else
+        type="button"
+        class="btn btn-outline-dark me-2"
+        @click="$router.back()"
+      >
+        <i class="fs-4 fas fa-long-arrow-alt-left"></i>
+      </button>
 
       <div class="buttons-group">
         <router-link
@@ -45,9 +59,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .btn-text {
-  margin-right: .5rem;
+  margin-right: 0.5rem;
 }
 
 @media (max-width: 576px) {
