@@ -26,7 +26,22 @@ export default {
 .main {
   display: grid;
   grid-template-columns: 1fr 11fr;
+ 
 }
+
+ .main > .main-message {
+
+    width: 70vw;
+    margin-left: 15vw;
+  }
+
+  @media (max-width:768px) {
+.main > .main-message {
+
+    width: 100vw;
+    margin-left: 0;
+  }
+  }
 
 @media (max-width:576px) {
   .main {

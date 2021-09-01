@@ -1,23 +1,19 @@
 <template>
-  <v-main-section>
+  <v-main-section class="main-message">
     <!-- Loading -->
     <Loader v-if="loading" />
     <!-- messages -->
-    <div class="card px-0 overflow-hidden col-12" v-else>
+    <div class="message-card card px-0 overflow-hidden col-12" v-else>
       <div class="card-header">
         <div class="list-group-item__text">
-          <div class="list-group-item__seller d-flex align-items-center justify-content-between mb-2">
-          <button type="button" class="btn btn-dark me-2"
-          @click="$router.back()"
-          ><i class="fs-4 fas fa-long-arrow-alt-left"></i></button>
-          <div class="d-flex align-items-center">
+          <div class="list-group-item__seller d-flex align-items-center mb-2">
+
             <img
               :src="userAd.avatar"
               class="me-3 rounded-circle user-avatar"
               alt="..."
             />
             <h5 class="card-title">{{ userAd.login }}</h5>
-            </div>
           </div>
           <h6 class="mb-1">
             <i class="fas fa-shopping-bag fs-4 me-3"></i>
@@ -67,6 +63,7 @@
             type="button"
             id="button-addon1"
             @click="sendMessage"
+            :disabled="message.text.length === 0"
           >
             <i class="fas fa-paper-plane"></i>
           </button>
@@ -163,6 +160,9 @@ export default {
 
     getMessage(e) {
       this.message.text = e.target.innerHTML;
+      if(e.target.textContent === '') {
+        this.message.text = ''
+      }
     },
   },
   updated() {
@@ -190,7 +190,14 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+
+.message-card {
+
+    height: calc(100vh - 5.5rem);
+    
+  }
+
 .user-avatar {
   object-fit: cover;
   width: 40px;
@@ -213,6 +220,15 @@ export default {
 
 .card-body {
   height: 60vh;
+}
+
+@media (max-width: 576px) {
+
+  .message-card {
+
+    height: calc(100vh - 5.5rem);
+  }
+  
 }
 
 </style>
