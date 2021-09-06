@@ -6,10 +6,13 @@
           <img
             :src="card.mainImage"
             class="list-group-item__main-image img-fluid rounded img-cover"
+            :style="card.status === 'closed' ? 'filter: opacity(0.5)': 'filter: none'"
           />
         </router-link>
       </div>
-      <div class="list-group-item__text">
+      <div class="list-group-item__text"
+      :style="card.status === 'closed' ? 'filter: opacity(0.5)': 'filter: none'"
+      >
         <router-link
           class="text-decoration-none link-dark"
           :to="{ name: 'ProductItem', params: { id: card.id } }"
