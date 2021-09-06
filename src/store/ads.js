@@ -297,16 +297,20 @@ export default {
     },
 
     //изменение статуса объявления
-    async changeStatusAdById({ getters, commit }, id) {
+    async changeStatusAdById({ getters, commit }, {id, reasonChangeAd}) {
       const allAds = getters["allAds"];
 
 
         const currentAd = allAds.find((item) => item.id === id);
         let status = currentAd.status === "closed" ? "moderation" : "closed";
+        currentAd.reasonChangeAd.push({
+          date: new Date(),
+          reason: reasonChangeAd
+        })
 
         const {error} = await supabase
           .from("ads")
-          .update([{ status }])
+          .update([{ status, changeDate: new Date(), reasonChangeAd: currentAd.reasonChangeAd}])
           .eq("id", id);
 
           if(error) {
