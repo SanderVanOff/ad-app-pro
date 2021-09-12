@@ -10,9 +10,12 @@
       <div class="product__images p-3">
         <h3 class="card-title h2 fw-bolder break-word mb-3 pe-4">
           {{ currentAd.title }}
+          <span v-if="currentAd.status === 'closed'" class="badge bg-danger"
+            >Закрыто</span
+          >
         </h3>
         <div class="product-images__list">
-          <img
+          <!-- <img
             :src="item"
             alt=""
             class="product-images__item rounded"
@@ -21,13 +24,64 @@
             data-bs-toggle="modal"
             data-bs-target="#modalImageId"
             @click="modalImage = item"
-          />
+          /> -->
+          <div
+            id="carouselExampleControls"
+            class="carousel slide"
+            data-bs-ride="carousel"
+          >
+            <div class="carousel-inner">
+              <div
+                class="carousel-item h-50"
+                :class="{ active: currentImage === i }"
+                v-for="(item, i) of currentAd.images"
+                :key="item"
+              >
+                <img
+                  :src="item"
+                  class="d-block w-100 img-contain cursor-pointer"
+                  alt="..."
+                  style="height: 380px; background-color: #212529"
+                  data-bs-toggle="modal"
+                  data-bs-target="#modalImageId"
+                  @click="modalImage = item"
+                />
+              </div>
+            </div>
+            <button
+              class="carousel-control-prev"
+              type="button"
+              data-bs-target="#carouselExampleControls"
+              data-bs-slide="prev"
+            >
+              <span
+                class="carousel-control-prev-icon"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">Предыдущий</span>
+            </button>
+            <button
+              class="carousel-control-next"
+              type="button"
+              data-bs-target="#carouselExampleControls"
+              data-bs-slide="next"
+            >
+              <span
+                class="carousel-control-next-icon"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">Следующий</span>
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- info -->
       <div class="product__data position-relative">
-        <div class="product-data__info sticky-top pt-5 px-4">
+        <div
+          class="product-data__info sticky-top px-4"
+          :class="currentAd.status === 'closed' ? 'text-muted' : 'text-body'"
+        >
           <!--стоимость -->
           <div class="fs-2 p-2">
             <i class="fas fa-coins me-3"></i>
@@ -87,7 +141,7 @@
           <button
             type="button"
             class="
-            w-100
+              w-100
               btn btn-dark
               mb-2
               shadow-sm
@@ -95,8 +149,7 @@
               align-items-center
               justify-content-center
               p-2
-              py-lg-2
-              py-4
+              py-lg-2 py-4
             "
             @click="addLikes(currentAd.id)"
           >
@@ -125,27 +178,33 @@
                 flex-column
                 justify-content-evenly
               "
+              style="margin-bottom: 5rem"
             >
-              <button
-                type="button"
-                class="btn btn-dark mb-2 py-lg-2
-              py-4"
-                data-bs-toggle="modal"
-                data-bs-target="#modalPhone"
-                :disabled="currentAd.communication === 'onlyMessage'"
-              >
-                <i class="fas fa-binoculars fs-4 me-3"></i>
-                {{
-                  currentAd.communication === "onlyMessage"
-                    ? "Номер скрыт"
-                    : "Показать номер"
-                }}
-              </button>
-              <router-link tag="button" :disabled="currentAd.uid === currentUser.id" class="btn btn-dark py-lg-2
-              py-4" :to="{ name: 'MessageItem', params: { id: currentAd.id } }">
-                <i class="fas fa-feather-alt fs-4 me-3"></i>
-                Написать
-              </router-link>
+              <template v-if="currentAd.status !== 'closed'">
+                <button
+                  type="button"
+                  class="btn btn-dark mb-2 py-lg-2 py-4"
+                  data-bs-toggle="modal"
+                  data-bs-target="#modalPhone"
+                  :disabled="currentAd.communication === 'onlyMessage'"
+                >
+                  <i class="fas fa-binoculars fs-4 me-3"></i>
+                  {{
+                    currentAd.communication === "onlyMessage"
+                      ? "Номер скрыт"
+                      : "Показать номер"
+                  }}
+                </button>
+                <router-link
+                  tag="button"
+                  :disabled="currentAd.uid === currentUser.id"
+                  class="btn btn-dark py-lg-2 py-4"
+                  :to="{ name: 'MessageItem', params: { id: currentAd.id } }"
+                >
+                  <i class="fas fa-feather-alt fs-4 me-3"></i>
+                  Написать
+                </router-link>
+              </template>
             </div>
           </div>
         </div>
@@ -153,6 +212,7 @@
     </div>
     <!-- modals images -->
     <v-modal modalId="modalImageId" classModal="modal__image">
+    
       <img :src="modalImage" alt="" class="modal-img" />
     </v-modal>
     <!-- modals phone -->
@@ -256,6 +316,7 @@ export default {
   height: 100%;
   overflow: hidden;
 }
+/*
 .product-images__list {
   display: grid;
   grid-gap: 10px;
@@ -278,6 +339,7 @@ export default {
   grid-row: span 3;
   grid-column: span 3;
 }
+*/
 
 .user-avatar {
   width: 100px;
@@ -294,13 +356,12 @@ export default {
 }
 
 @media (max-width: 992px) {
-.product {
-  grid-template-columns: 12fr;
-}
+  .product {
+    grid-template-columns: 12fr;
+  }
 
-.buttons-group {
-  margin-bottom: 5rem;
-}
-  
+  .buttons-group {
+    margin-bottom: 5rem;
+  }
 }
 </style>
