@@ -97,7 +97,7 @@ export default {
 
 <style lang="scss" scoped>
 aside {
-  z-index: 9999;
+  z-index: 1021;
   height: calc(100vh - 3.5rem); 
   top: 3.5rem
 }
