@@ -11,10 +11,10 @@
       ></app-categories>
       <keep-alive>
         
-          <template v-if="filteredAd.length">
+          <template v-if="filteredByCategoryAds.length">
           <transition-group name="list" mode="out-in" tag="div" class="cards">
             <v-card
-              v-for="card of filteredAd"
+              v-for="card of filteredByCategoryAds"
               :key="card.id"
               :cardItem="card"
               @go-to-card-info="goToCardInfo(card.id)"
@@ -49,18 +49,26 @@ export default {
   },
   computed: {
     ...mapGetters(["allAds", "currentUID"]),
-    activeAds() {
-      return this.ads;
-      // return this.ads.filter(ad => ad.status === 'active');
-    },
+
+    filteredByCategoryAds(){
+      return this.ads.filter(item => {
+        if(this.filter === '000'){
+          return true
+        } else {
+          return item.categoryId === this.filter
+        }
+      })
+    }
   },
   data: () => ({
     loading: false,
     counter: 0,
     ads: [],
-    filteredAd: [],
+    filter: '000',
     categories: [],
   }),
+
+
   methods: {
     ...mapActions(["fetchAdsFromDB", "addFavoriteAdToUser", "fetchCategories"]),
     async goToCardInfo(id) {
@@ -73,25 +81,8 @@ export default {
       await this.addFavoriteAdToUser(id);
     },
 
-    changeCategory(id) {
-      console.log('id', id)
-      if (this.$route.params.id !== id) {
-        this.$route.params.id = id;
-        this.$router.push(`/categories/${id}`);
-
-        this.filteredAd = this.ads.filter(
-          (ad) => ad.categoryId === this.$route.params.id
-        );
-      } else {
-        this.filteredAd = this.ads.filter(
-          (ad) => ad.categoryId === this.$route.params.id
-        );
-      }
-      if (id === "000") {
-        this.$route.params.id = id;
-        this.$router.push(`/`);
-        this.filteredAd = this.ads;
-      }
+    changeCategory(payload) {
+      this.filter = payload
     },
   },
   async mounted() {
@@ -101,9 +92,6 @@ export default {
       ...(await this.fetchCategories()),
     ];
     this.ads = await this.fetchAdsFromDB();
-    this.filteredAd = this.ads.sort((a, b) => a.id < b.id);
-    console.log('this.$route.params.id', this.$route.params.id);
-    if (this.$route.params.id) this.changeCategory(this.$route.params.id);
     this.loading = false;
   },
 };

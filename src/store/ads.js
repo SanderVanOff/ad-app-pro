@@ -46,7 +46,7 @@ export default {
   actions: {
     //Получение все объявлений
     async fetchAdsFromDB({ commit }) {
-      const { data: allAds, error } = await supabase.from("ads").select();
+      const { data: allAds, error } = await supabase.from("ads").select().order('id', { ascending: false });
       commit("setAdsToState", allAds);
       if (error) {
         commit("setNotification", {
