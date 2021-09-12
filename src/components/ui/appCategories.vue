@@ -1,5 +1,5 @@
 <template>
-  <div
+  <!-- <div
     class="categories-group btn-group pb-3 d-flex"
     role="group"
     aria-label="Basic outlined example"
@@ -15,6 +15,14 @@
     >
       {{ category.title }}
     </button>
+  </div> -->
+  <div class="filter col-12 col-sm-6  col-md-4 mb-3">
+  <select class="form-select" @change="$emit('changeCategory', filterCategory)" v-model="filterCategory">
+    <option selected disabled>Выберите категорию</option>
+    <option :value="category.id" v-for="category of categories"
+    :key="category.id"
+    >{{category.title}}</option>
+  </select>
   </div>
 </template>
 
@@ -27,35 +35,19 @@ export default {
     },
   },
 
+  data: () => ({
+    filterCategory: '000'
+  }),
+
   methods: {
-    getRefs(id = '000') {
-
-        let butRef = `category${id}`;
-
-        Object.keys(this.$refs).forEach((key) => {
-          this.$refs[key][0].classList.remove("active");
-        });
-        this.$refs[butRef][0].classList.add("active");
-    },
-  },
-
-  mounted() {
-    if(this.$refs.category001) {
-     this.getRefs(this.$route.params.id)
+    changeCategory(){
+      console.log(1)
     }
-  },
+  }
+
 };
 </script>
 
 <style lang="scss" scoped>
-@media (max-width: 576px) {
-  .categories-group {
-    flex-wrap: wrap;
 
-    &__btn {
-      border-radius: 0.25rem !important;
-      margin: 5px;
-    }
-  }
-}
 </style>

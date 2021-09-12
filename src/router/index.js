@@ -18,18 +18,6 @@ const router = new Router({
         layout: "main",
         auth: true
       },
-      children: [
-
-        {
-          name: 'categories',
-          path: 'categories/:id',
-          component: Home,
-          meta: {
-            layout: "main",
-            auth: true
-          },
-        }
-      ]
     },
     {
       name: "Login",
