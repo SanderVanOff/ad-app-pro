@@ -50,8 +50,8 @@
 <script>
 export default {
   methods: {
-    logout() {
-      // this.$store.dispatch("logoutUset");
+    async logout() {
+      this.$store.dispatch("logoutUset");
       this.$router.push("/login");
     },
   },
