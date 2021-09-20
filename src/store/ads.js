@@ -41,6 +41,10 @@ export default {
       const ad = state.ads.find((item) => item.id === id);
       ad.status = status;
     },
+
+    clearAds(state) {
+      state.ads = []
+    }
   },
 
   actions: {
