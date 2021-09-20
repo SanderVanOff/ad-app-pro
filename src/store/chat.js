@@ -1,9 +1,5 @@
-// import { storage } from "@/plugins/axios";
 import supabase from "@/plugins/supabase";
-//константы
-// const config = {
-//   headers: { "content-type": "multipart/form-data" },
-// };
+
 
 export default {
   state: {
