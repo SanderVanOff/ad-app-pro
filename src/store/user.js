@@ -111,6 +111,8 @@ export default {
       await supabase.auth.signOut();
       commit("clearToken");
       commit("clearUser");
+      commit("clearAds");
+      commit("clearNotification")
     },
 
     //GET CURRENT USER
