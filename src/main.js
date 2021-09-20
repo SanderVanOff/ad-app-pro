@@ -37,32 +37,49 @@ Vue.use(VueLoaders);
 Vue.component("Loader", Loader);
 
 
+
 let app;
 
 if (!app) {
   app = new Vue({
     router,
     store,
+    created() {
+      const user = supabase.auth.user();
+      const session = supabase.auth.session()
+
+      if (!user && this.$route.name !== "Login") {
+       this.$router.push('/login')
+      }
+
+      if(!session?.expires_at) {
+        supabase.auth.onAuthStateChange(async (_, data) => {
+          store.commit("setToken", {
+            uid: data.user.id,
+            token: data.access_token,
+          });
+          const currentUser = await store.dispatch(
+            "getUserById",
+            data.user.id
+          );
+          store.commit("setUserToState", currentUser);
+        });
+      }
+
+
+    },
     render: (h) => h(App),
   }).$mount("#app");
+    
+    
+    supabase
+      .from("chat")
+      .on("*", (chat) => {
+        if (chat.new) {
+          store.dispatch("getNotReadMessages");
+        }
+      })
+      .subscribe();
 
-  supabase.auth.onAuthStateChange(async (_, data) => {
-    store.commit("setToken", {
-      uid: data.user.id,
-      token: data.access_token,
-    });
-    const currentUser = await store.dispatch("getUserById", data.user.id);
-    store.commit("setUserToState", currentUser);
-  });
-
-  supabase
-  .from("chat")
-  .on("*", (chat) => {
-    if (chat.new) {
-      store.dispatch('getNotReadMessages')
-    }
-  })
-  .subscribe();
-
-  store.dispatch('getNotReadMessages')
-}
+    store.dispatch("getNotReadMessages");
+  }
