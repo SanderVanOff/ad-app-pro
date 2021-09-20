@@ -13,6 +13,10 @@ export default {
       
     },
 
+    clearNotification(state){
+      state.notification = []
+    }
+
   },
 
   actions: {},
