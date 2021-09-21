@@ -1,13 +1,36 @@
 <template>
   <div class="card">
     <div class="card-img position-relative">
+    <!--
       <img
         :src="cardItem.mainImage"
         class="card-img-top card-image img-cover cursor-pointer"
         @click="$emit('go-to-card-info')"
       />
+      -->
+      <div :id="`carouselExampleIndicators${cardItem.id}`" class="carousel slide" data-bs-ride="carousel" data-bs-touch="true">
+  <div class="carousel-indicators">
+    <button 
+    v-for="(img, i) of cardItem.images"
+    :key="img"
+    type="button" :data-bs-target="`#carouselExampleIndicators${cardItem.id}`" :data-bs-slide-to="i" 
+    :class="{ active: currentImg === i }"
+     aria-current="true" aria-label="Slide 1"></button>
+  </div>
+  <div class="carousel-inner"
+  @click="$emit('go-to-card-info')">
+    <div class="carousel-item"
+    v-for="(img, i) of cardItem.images"
+      :key="img"
+      :class="{ active: currentImg === i }"
+    >
+      <img 
+      :src="img" class="d-block w-100 card-img-top card-image img-cover cursor-pointer" alt="...">
+    </div>
+  </div>
+</div>
       <div
-        class="card-info d-flex justify-content-between ps-3 align-items-center position-absolute bottom-1"
+        class="card-info d-flex justify-content-between ps-3 align-items-center position-absolute top-1"
       >
         <span class="badge bg-danger fs-5 shadow-lg">{{
           getCurrencyCost(cardItem.cost)
@@ -51,6 +74,7 @@ export default {
   },
   data: () => ({
     likes: [],
+    currentImage: 0
   }),
 
   computed: {
@@ -58,6 +82,9 @@ export default {
     isFavorite() {
       return this.cardItem.likes.includes(this.currentUser.id) ? true : false;
     },
+    currentImg(){
+      return this.cardItem.images.findIndex((item)=> item === this.cardItem.mainImage)
+    }
   },
 
   methods: {
