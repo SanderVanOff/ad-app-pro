@@ -1,36 +1,35 @@
 <template>
   <div class="card">
     <div class="card-img position-relative">
-    <!--
-      <img
-        :src="cardItem.mainImage"
-        class="card-img-top card-image img-cover cursor-pointer"
-        @click="$emit('go-to-card-info')"
-      />
-      -->
-      <div :id="`carouselExampleIndicators${cardItem.id}`" class="carousel slide" data-bs-ride="carousel" data-bs-touch="true">
-  <div class="carousel-indicators">
-    <button 
-    v-for="(img, i) of cardItem.images"
-    :key="img"
-    type="button" :data-bs-target="`#carouselExampleIndicators${cardItem.id}`" :data-bs-slide-to="i" 
-    :class="{ active: currentImg === i }"
-     aria-current="true" aria-label="Slide 1"></button>
-  </div>
-  <div class="carousel-inner"
-  @click="$emit('go-to-card-info')">
-    <div class="carousel-item"
-    v-for="(img, i) of cardItem.images"
-      :key="img"
-      :class="{ active: currentImg === i }"
-    >
-      <img 
-      :src="img" class="d-block w-100 card-img-top card-image img-cover cursor-pointer" alt="...">
-    </div>
-  </div>
-</div>
+      <agile :dots="false" :initialSlide="currentImg" :navButtons="false">
+        <div
+          class="slide"
+          v-for="img of cardItem.images"
+          :key="img"
+          @click="$emit('go-to-card-info')"
+        >
+          <img
+            :src="img"
+            class="
+              d-block
+              w-100
+              card-img-top card-image
+              img-cover
+              cursor-pointer
+            "
+          />
+        </div>
+      </agile>
       <div
-        class="card-info d-flex justify-content-between ps-3 align-items-center position-absolute top-1"
+        class="
+          card-info
+          d-flex
+          justify-content-between
+          ps-3
+          align-items-center
+          position-absolute
+          top-1
+        "
       >
         <span class="badge bg-danger fs-5 shadow-lg">{{
           getCurrencyCost(cardItem.cost)
@@ -59,6 +58,8 @@
 </template>
 
 <script>
+import { VueAgile } from "vue-agile";
+
 //filters
 import { formatCurrency } from "@/filters/currency.filter";
 //vuex
@@ -72,9 +73,12 @@ export default {
       default: () => ({}),
     },
   },
+  components: {
+    agile: VueAgile,
+  },
   data: () => ({
     likes: [],
-    currentImage: 0
+    currentImage: 0,
   }),
 
   computed: {
@@ -82,9 +86,11 @@ export default {
     isFavorite() {
       return this.cardItem.likes.includes(this.currentUser.id) ? true : false;
     },
-    currentImg(){
-      return this.cardItem.images.findIndex((item)=> item === this.cardItem.mainImage)
-    }
+    currentImg() {
+      return this.cardItem.images.findIndex(
+        (item) => item === this.cardItem.mainImage
+      );
+    },
   },
 
   methods: {
@@ -105,8 +111,8 @@ export default {
 
 @media (max-width: 991px) {
   .card-image {
-  height: 250px;
-}
+    height: 250px;
+  }
 }
 .component-fade-enter-active,
 .component-fade-leave-active {
@@ -118,10 +124,8 @@ export default {
 }
 
 @media (max-width: 576px) {
-
   .card:last-child {
     margin-bottom: 3.5rem;
   }
 }
-
 </style>
