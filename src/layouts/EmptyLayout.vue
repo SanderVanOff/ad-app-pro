@@ -14,5 +14,6 @@ export default {
 .empty-layout {
   height: 100vh;
   background: linear-gradient(141deg, #00535a, #006a8d 71%, #0061a7);
+  padding: 10px;
 }
 </style>
